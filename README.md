@@ -1,11 +1,35 @@
 # Proyek Machine Learning - Model Klasifikasi Drug-Target Interaction (DTI) Pada Biomolekul Enzyme
 
 # Domain Proyek 
-Pengembangan obat merupakan proses yang kompleks dan memerlukan waktu serta biaya yang besar. Penemuan obat baru membutuhkan langkah-langkah identifikasi target biologis yang relevan dan pengujian efektivitas obat dalam mengintervensi target tersebut dengan cara merancang ligan yang sangat selektif terhadap satu target tertentu [[1](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002503)]. Salah satu target yang paling sering diteliti adalah enzim, yang memiliki peran penting dalam proses metabolisme dan fungsi biologis lainnya [[2](https://ppjp.ulm.ac.id/journal/index.php/quantum/article/view/5574)]. Proses ini sering kali memakan waktu bertahun-tahun dan melibatkan biaya besar, sementara metode eksperimen konvensional memiliki keterbatasan berupa waktu yang lama dan biaya yang tinggi dimana pendekatan komputasi muncul sebagai solusi yang lebih efisien untuk mempercepat proses penemuan obat [[1] (https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002503)]
+Pengembangan obat merupakan proses yang kompleks dan memerlukan waktu serta biaya yang besar. Penemuan obat baru membutuhkan langkah-langkah identifikasi target biologis yang relevan dan pengujian efektivitas obat dalam mengintervensi target tersebut dengan cara merancang ligan yang sangat selektif terhadap satu target tertentu [[1](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002503)]. Salah satu target yang paling sering diteliti adalah enzim, yang memiliki peran penting dalam proses metabolisme dan fungsi biologis lainnya [[2](https://ppjp.ulm.ac.id/journal/index.php/quantum/article/view/5574)]. Proses ini sering kali memakan waktu bertahun-tahun dan melibatkan biaya besar, sementara metode eksperimen konvensional memiliki keterbatasan berupa waktu yang lama dan biaya yang tinggi dimana pendekatan komputasi muncul sebagai solusi yang lebih efisien untuk mempercepat proses penemuan obat [[1](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002503)]
 
-Model _Drug-Target Interaction_ (DTI) berbasis komputasi menawarkan pendekatan yang mampu memanfaatkan data biologis untuk melatih algoritma machine learning [[3](https://link.springer.com/article/10.1007/s13755-024-00287-6). Pendekatan ini sangat relevan untuk memprediksi interaksi antara protein dan senyawa bioaktif yang dapat mempengaruhi enzim secara efisien [[4](https://academic.oup.com/bioinformatics/article/24/2/225/228453)], serta memanfaatkan senyawa yang telah disetujui sebelumnya untuk indikasi terapeutik baru dengan lebih cepat dan meningkatkan akurasi dalam mengidentifikasi pasangan obat-target yang potensial. [[5](https://ieeexplore.ieee.org/document/8354081)]
+Model _Drug-Target Interaction_ (DTI) berbasis komputasi menawarkan pendekatan yang mampu memanfaatkan data biologis untuk melatih algoritma machine learning [[3](https://link.springer.com/article/10.1007/s13755-024-00287-6)]. Pendekatan ini sangat relevan untuk memprediksi interaksi antara protein dan senyawa bioaktif yang dapat mempengaruhi enzim secara efisien [[4](https://academic.oup.com/bioinformatics/article/24/2/225/228453)], serta memanfaatkan senyawa yang telah disetujui sebelumnya untuk indikasi terapeutik baru dengan lebih cepat dan meningkatkan akurasi dalam mengidentifikasi pasangan obat-target yang potensial. [[5](https://ieeexplore.ieee.org/document/8354081)]
 
-Pendekatan permodelan machine learning yang pernah digunakan untuk memprediksi interaksi antara protein dan senyawa bioaktif diantaranya seperti Random Forest [[6](https://bmccomplementmedtherapies.biomedcentral.com/articles/10.1186/s12906-022-03686-y)], K-Nearest Neighbor (KNN) [[7](https://link.springer.com/article/10.1007/s10489-021-02495-z)], Stacked Autoencoder Deep Neural Network (SAE-DNN) [[8](https://www.mdpi.com/2504-2289/5/4/75) , dan Adaboost [[9](https://europepmc.org/article/pmc/pmc9935192). 
+Pendekatan permodelan _machine learning_ yang pernah digunakan untuk memprediksi interaksi antara protein dan senyawa bioaktif diantaranya seperti Random Forest [[6](https://bmccomplementmedtherapies.biomedcentral.com/articles/10.1186/s12906-022-03686-y)], K-Nearest Neighbor (KNN) [[7](https://link.springer.com/article/10.1007/s10489-021-02495-z)], Stacked Autoencoder Deep Neural Network (SAE-DNN) [[8](https://www.mdpi.com/2504-2289/5/4/75)] , dan Adaboost [[9](https://europepmc.org/article/pmc/pmc9935192)]. 
+
+# Business Understanding
+Pendekatan berbasis komputasi seperti model klasifikasi _Drug-Target Interaction_ (DTI) menawarkan solusi yang lebih efisien. Model ini memanfaatkan algoritma _machine learning_ untuk memprediksi kemungkinan interaksi antara biomolekul enzim dan senyawa bioaktif dengan tingkat akurasi yang tinggi. Keuntungan utama dari pengembangan model DTI ini adalah kemampuannya dalam mempercepat proses penemuan obat, mengurangi biaya riset, dan meningkatkan peluang menemukan obat yang lebih efektif untuk pengobatan berbagai penyakit. Dengan adanya model ini, perusahaan farmasi, peneliti bioteknologi, dan lembaga kesehatan dapat memanfaatkan data biologis yang tersedia untuk mempercepat penemuan dan pengembangan obat, khususnya yang menargetkan enzim yang memiliki peran penting dalam metabolisme dan fungsi biologis lainnya.
+
+### Problem Statements
+1. Berdasarkan eksplorasi terhadap _dataset_, Bagaimana proses penggabungan tiga _dataset_ (protein, senyawa, dan interaksi) dapat mendukung analisis lebih lanjut?
+2. Bagaimana cara membangkitkan data negatif secara efektif untuk memperkaya variasi data dalam proses pelatihan model?
+3. Bagaimana memproses _dataset_ agar dapat digunakan untuk membangun model _machine learning_ yang efektif dalam memprediksi interaksi _drug-target_?
+4. Bagaimana cara mendapatkan model klasifikasi _Drug-Target Interaction_ (DTI) dengan performa terbaik untuk mendukung penemuan obat?
+
+### Goals
+1. Melakukan penggabungan tiga _dataset_ utama (protein, senyawa, dan interaksi) untuk menyusun dataset yang siap untuk analisis lebih lanjut.
+2. Mengembangkan proses pembangkitan data negatif untuk memperkuat representasi data dalam proses klasifikasi.
+3. Melakukan data _preparation_ termasuk penyeimbangan data, transformasi, dan pembagian data untuk melatih model.
+4. Melakukan pelatihan dengan _baseline model_ dari algoritma Random Forest, K-Nearest Neighbor (KNN), dan Deep Learning, kemudian meningkatkan performa model melalui _hyperparameter tuning_.
+
+### Solution Statements
+1. Menggabungkan tiga dataset utama (protein, senyawa, dan interaksi) untuk membangun struktur dataset yang konsisten dan representatif dengan cara _key matching_
+2. Melakukan pembangkitan data negatif secara acak namun terkendali untuk meningkatkan variasi dan mengatasi ketidakseimbangan data dalam proses pelatihan model dengan pendekatan _over sampling_
+3. Menyiapkan data dengan proses _preprocessing_, meliputi penanganan ketidakseimbangan data menggunakan SMOTE, transformasi data dengan PowerTransformer, dan pembagian dataset untuk pelatihan dan pengujian.
+5. Melatih model dengan tiga algoritma: Random Forest, KNN, SAE-DNN dan AdaBoost, kemudian mengevaluasi performa model menggunakan metrik evaluasi seperti akurasi, _precision_, _recall_, dan F1-score. Model dengan performa terbaik akan disempurnakan melalui _grid search_ untuk mendapatkan _hyperparameter_ optimal sebelum digunakan dalam pengujian akhir.
+
+
+
 
 
 # Referensi
