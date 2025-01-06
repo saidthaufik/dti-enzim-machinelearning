@@ -913,9 +913,12 @@ Setelah proses pelatihan dan tuning selesai, evaluasi model dilakukan dengan men
 
 <div align="center">
 
-![image](https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc)  
+<img src="https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc" alt="Confusion Matrix" width="500"/>  
+
+<br> 
+
 **Gambar 4 - Confusion Matrix**  
-_(Sumber: Rahul S, 2023 [link](https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac))_
+(Sumber: Rahul Sankar, 2023 [[11](https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac)])
 
 </div>
 
@@ -925,48 +928,96 @@ _(Sumber: Rahul S, 2023 [link](https://ogre51.medium.com/how-is-confusion-matrix
 - **False Positive (FP):** Jumlah prediksi positif yang salah (_false alarm_).
 - **False Negative (FN):** Jumlah prediksi negatif yang salah (_missed detection_).
 
+Berikut adalah implementasi kodenya:
 
+```python
+preds = best_rf.predict(X_test)
+cm = confusion_matrix(y_test, preds)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negatif', 'Positif'])
+disp.plot(cmap='Blues')
+plt.title('Confusion Matrix')
+plt.show()
+```
 
+<div align="center">
 
+<img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result"/>  
 
+**Gambar 5 - Confusion Matrix Result**
 
+</div>
 
+Berdasarkan grafik diatas berikut adalah Hasil _Confusion Matrix_ dari Permodelan Data _Testing_ yang totalnya berjumlah **1.054 Data**:
 
+1. **True Negative (TN) - 482**  
+   Model berhasil memprediksi **482 sampel negatif** dengan benar.
 
+2. **False Positive (FP) - 33**  
+   Model salah memprediksi **33 sampel negatif** sebagai **positif**.  
+   Ini menunjukkan adanya beberapa kesalahan identifikasi negatif.
 
+3. **False Negative (FN) - 37**  
+   Model salah memprediksi **37 sampel positif** sebagai **negatif**.  
+   Ini berarti ada beberapa interaksi yang sebenarnya **positif** tetapi tidak terdeteksi.
 
+4. **True Positive (TP) - 502**  
+   Model berhasil memprediksi **502 sampel positif** dengan benar.
 
+Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** untuk mengukur performa model terhadap _Data Testing_ yang meliputi:  
 
+Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** untuk mengukur performa model terhadap _Data Testing_ yang meliputi:  
 
+1. **Akurasi**  
+   Mengukur proporsi prediksi yang benar dibandingkan total prediksi.  
 
+   $$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$$  
 
+2. **Presisi (Precision)**  
+   Mengukur ketepatan prediksi positif yang benar.  
 
+   $$Precision = \frac{TP}{TP + FP}$$  
 
+3. **Recall (Sensitivitas)**  
+   Mengukur kemampuan model menangkap semua kasus positif yang sebenarnya.  
 
+   $$Recall = \frac{TP}{TP + FN}$$  
 
+4. **F1-Score**  
+   Rata-rata harmonik antara presisi dan _recall_, memberikan keseimbangan antara kedua metrik ini.  
 
+   $$F1\text{-}Score = \frac{2 \cdot Precision \cdot Recall}{Precision + Recall}$$
 
+Berikut adalah implementasi kodenya:
 
+``` python
+best_rf = grid_search.best_estimator_
+preds = best_rf.predict(X_test)
+print('\n=== Classification Report ===')
+print(classification_report(y_test, preds))
+print(f'Akurasi Testing Random Forest: {accuracy_score(y_test, preds):.4f}')
+```
 
+Dengan _output_ sebagai berikut:
 
+```
+              precision    recall  f1-score   support
 
+           0       0.93      0.94      0.93       515
+           1       0.94      0.93      0.93       539
 
+    accuracy                           0.93      1054
+   macro avg       0.93      0.93      0.93      1054
+weighted avg       0.93      0.93      0.93      1054
+```
 
+**Akurasi Testing Random Forest:** **0.9336**
 
+Dengan Akurasi terhadap data _testing_ adalah sebesar **93,36%** dengan _score_ lain:
+- Precision : 93%
+- Recall : 93% 
+- F1-score: 93%
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+yang sebelumnya adalah **92,22%** (tanpa _hyperparameter tuning_)
 
 # Referensi
 [1]	F. Cheng et al., “Prediction of drug-target interactions and drug repositioning via network-based inference,” PLoS Comput. Biol., vol. 8, no. 5, 2012, doi: 10.1371/journal.pcbi.1002503.
@@ -988,3 +1039,5 @@ _(Sumber: Rahul S, 2023 [link](https://ogre51.medium.com/how-is-confusion-matrix
 [9]	W. Gu, X. Xie, Y. He, and Z. Zhang, “Drug-target protein interaction prediction based on AdaBoost algorithm,” Sheng Wu Yi Xue Gong Cheng Xue Za Zhi, vol. 35, no. 6, pp. 935–942, 2018, doi: 10.7507/1001-5515.201802026.
 
 [10]	N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer, “SMOTE: Synthetic Minority Over-sampling Technique,” J. Artif. Intell. Res., vol. 16, pp. 321–357, Jun. 2002, doi: 10.1613/jair.953.
+
+[11] [1] A. Sankar, "How is Confusion Matrix Useful in Classification Problems?," Medium, Dec. 22, 2019. [Online]. Available: https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac. 
