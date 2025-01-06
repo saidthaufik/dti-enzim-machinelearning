@@ -512,8 +512,14 @@ Univariate analysis adalah jenis analisis data yang hanya melibatkan satu variab
 
 Pada analisis ini akan melihat distribusi label pada _dataset_ dengan menggunakan visualisasi Grafik Histogram
 
-![image](https://github.com/user-attachments/assets/9f436263-a7de-4d43-9f9b-38a023fa1472)
-Gambar 1
+<div align="center">
+
+![image](https://github.com/user-attachments/assets/9f436263-a7de-4d43-9f9b-38a023fa1472)  
+**Gambar 1 - Univariate Analysis Categorical Column**
+
+</div>
+
+
 
 Berikut adalah sebaran distribusi label `0` (berinteraksi) dan `1` (tidak berinterasi):
    - `0` sebanyak **5.852 data** 
@@ -526,11 +532,419 @@ Data ini _imbalance_ antar tiap label yang berpotensi untuk bias terhadap kelas 
 #### Mengatasi Imbalance Data
 Proses ini dirancang untuk menangani **ketidakseimbangan data (_imbalance data_)** yang terjadi akibat penggunaan rasio **1:2** pada pembangkitan label negatif. Ketidakseimbangan ini dapat memengaruhi performa model, karena model cenderung lebih akurat dalam mengenali kelas mayoritas (negatif) dan mengabaikan kelas minoritas (positif). Oleh karena itu, diperlukan strategi khusus untuk menyeimbangkan jumlah data pada kedua kelas.  
 
-Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-sampling_** menggunakan teknik **SMOTE (Synthetic Minority Over-sampling Technique)** yang dikembangkan oleh [Chawla et al, 2002](https://dl.acm.org/doi/10.5555/1622407.1622416) 
+Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-sampling_** menggunakan teknik **SMOTE (Synthetic Minority Over-sampling Technique)** yang dikembangkan oleh Chawla et al, 2002 [[10]((https://dl.acm.org/doi/10.5555/1622407.1622416)]
 
 **SMOTE** adalah teknik **_oversampling_** yang digunakan untuk **menambah jumlah sampel pada kelas minoritas** secara sintetis. **SMOTE** menciptakan data baru dengan **menginterpolasi sampel yang sudah ada** berdasarkan **k-tetangga terdekat (k-nearest neighbors)**
 
 #### Langkah-Langkahnya adalah:
+
+#### 1. Pisahkan Fitur (x) dan Label (y)
+Proses ini menghapus kolom non-numerik (`Protein_ID` dan `Compound_ID`) 
+
+```python
+X = final_data.drop(['Label', 'Protein_ID', 'Compound_ID'], axis=1)  
+y = final_data['Label']  
+```
+
+#### 2. Terapkan SMOTE untuk _oversampling_ Data Positif
+
+```python
+smote = SMOTE(random_state=42)
+X_res, y_res = smote.fit_resample(X, y)  
+```
+
+#### 3. Cek Distribusi Label Sebelum dan Sesudah SMOTE
+
+```python
+print('Distribusi label sebelum SMOTE:', Counter(y))
+print('Distribusi label setelah SMOTE:', Counter(y_res))
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+print('Distribusi label sebelum SMOTE:', Counter(y))
+print('Distribusi label setelah SMOTE:', Counter(y_res))
+```
+
+Setelah dilakukan proses SMOTE distribusi data menjadi _balance_ yakni:
+   - `0` sebanyak **5.852 data** 
+   - `1` sebanyak **5.852 data**
+
+#### 4. Membuat Data Baru Hasil SMOTE
+
+```python
+final_data = pd.concat([pd.DataFrame(X_res), pd.Series(y_res, name='Label')], axis=1)
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+final_data
+```
+
+| hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | hsa1020 | hsa1021 | hsa1022 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  | Label |
+|---------|---------|----------|---------|---------|----------|---------|---------|---------|---------|-------|---------|---------|---------|---------|---------|-------|
+| 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| 0.024367| 0.022866| 0.019767| ...   | 0.033333| 0.166667| 0.215686| 0.122449| 0.203390| 1     |
+| 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| 0.024367| 0.022866| 0.019767| ...   | 0.069767| 0.317073| 0.150000| 0.147059| 0.250000| 1     |
+| 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| 0.024986| 0.019592| 0.022743| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641| 1     |
+| 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| 0.024986| 0.019592| 0.022743| ...   | 0.027778| 0.097561| 0.275862| 0.071429| 0.095238| 1     |
+| 0.021575| 0.018325| 1.000000 | 0.016285| 0.020771| 0.008854 | 0.017779| 0.016979| 0.016272| 0.017750| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818| 1     |
+| ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...     | ...     | ...     | ...   | ...     | ...     | ...     | ...     | ...     | ...   |
+| 0.024346| 0.018216| 0.019291 | 0.018234| 0.020749| 0.014449 | 0.020816| 0.018634| 0.019561| 0.017276| ...   | 0.044444| 0.341463| 0.205128| 0.142857| 0.272727| 1     |
+| 0.019777| 0.018063| 0.016827 | 0.022966| 0.023763| 0.013883 | 0.018367| 0.022507| 0.020280| 0.018392| ...   | 0.163636| 0.263158| 0.207547| 0.117647| 0.237288| 1     |
+| 0.018323| 0.016836| 0.013239 | 0.015112| 0.016072| 0.012489 | 0.016615| 0.020355| 0.017417| 0.020438| ...   | 0.065789| 0.219178| 0.109589| 0.121212| 0.200000| 1     |
+| 0.026959| 0.019298| 0.022743 | 0.268238| 0.272031| 0.043061 | 0.225573| 0.250866| 0.227815| 0.231554| ...   | 0.000000| 0.254545| 0.089286| 0.102041| 0.206897| 1     |
+| 0.014288| 0.013556| 0.011678 | 0.072779| 0.069437| 0.077397 | 0.077050| 0.068060| 0.075724| 0.061744| ...   | 0.157801| 0.245834| 0.269633| 0.240112| 0.307822| 1     |
+
+_11704 rows × 1110 columns_
+
+Berhasil membuat data baru Hasil SMOTE dengan variabel `final_data`
+
+## Pembagian Data Training, Data Testing dan Data Validation
+
+Pembagian data menjadi **Training**, **Testing**, dan **Validation** merupakan langkah penting dalam proses pembangunan model **_machine learning_**. 
+
+Tujuan utamanya adalah memastikan bahwa model yang dibangun dapat **mempelajari pola** dari data dengan baik, **menghindari _overfitting_**, dan **menggeneralisasi** performa terhadap data baru yang belum pernah dilihat sebelumnya.
+
+Berikut adalah penjelasan setiap data:
+
+- **_Training_ Data** : Digunakan untuk **melatih model** agar dapat mempelajari pola berdasarkan data yang diberikan.  
+
+- **_Validation_ Data** : Digunakan untuk **mengevaluasi model** selama pelatihan. Validation data membantu dalam melakukan **_hyperparameter tuning_** dan **pengujian model** sebelum dihadapkan pada data baru. Data ini juga memeriksa apakah model mengalami **_overfitting_** atau **_underfitting_**.  
+
+- **_Testing_ Data** : Digunakan untuk **pengujian akhir model** dengan data yang **belum pernah dilihat sebelumnya**. Tujuannya adalah mengukur **kinerja model** secara obyektif setelah model selesai dilatih dan divalidasi. Data ini juga mengukur metrik performa seperti akurasi, presisi, _recall_ atau **F1-score**.
+
+#### Mendefenisikan Fitur (x) dan Label (y)
+
+```python
+X = final_data.drop(columns=['label'])
+y = final_data['label']
+```
+
+#### Membagi data menjadi Training (70%)
+
+```python
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+```
+
+#### Membagi Sisa Data menjadi Validation (20%) dan Testing (10%)
+
+```python
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.3, random_state=42)
+```
+
+#### Menampilkan Hasil Pembagian Data
+
+```python
+print(f"Training: {len(X_train)}, Validation: {len(X_val)}, Testing: {len(X_test)}")
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Training: 8192, Validation: 2458, Testing: 1054
+```
+
+Berdasarkan _output_ diatas :
+- Komposisi 70%
+    - Data _Training_ sebanyak **8.192 data** 
+- Komposisi 30% (masing-masing 50%)
+    - Data _Validation_ sebanyak **2.458 data**
+    - Data _Testing_ sebanyak **1.054 data**
+
+## Data Transformation
+**Data Transformation** adalah proses mengubah data ke dalam format yang lebih sesuai untuk analisis atau pelatihan model _machine learning_. 
+
+Tujuannya adalah untuk **meningkatkan performa model** dengan menghilangkan skala yang tidak konsisten, distribusi yang tidak normal, atau _outlier_ yang ekstrem.
+
+Sebelum itu, kita akan **melihat persebaran datanya** dahulu untuk melihat metode Data Transformasi apa yang cocok untuk kasus data ini
+
+#### Mengecek Persebaran Data
+
+<div align="center">
+
+![image](https://github.com/user-attachments/assets/14f6815e-9a2d-4a5a-8144-635bfa79ef85)  
+**Gambar 2a - Data Distribution (Before Transform Data)**
+
+</div>
+
+Gambar di atas menunjukkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** sebelum transformasi, di mana ketiganya memiliki distribusi yang **sangat miring ke kanan (_positively skewed_)**. 
+
+Distribusi seperti ini dapat menyebabkan masalah pada algoritma _machine learning_ yang mengasumsikan **distribusi normal (Gaussian)**, serta membuat model rentan terhadap **bias** akibat _outlier_. 
+
+Oleh karena itu, transformasi data seperti **PowerTransformer (Yeo-Johnson)** diperlukan untuk **menormalkan distribusi**, sehingga fitur menjadi lebih **simetris** dan **stabil**, yang diharapkan dapat meningkatkan performa model.
+
+#### Penerapan Power Transformer
+
+Adapun kode dari transformasi Power Transformer adalah sebagai berikut:
+
+```python
+transformer = PowerTransformer(method='yeo-johnson')  
+X_train = transformer.fit_transform(X_train)
+X_val = transformer.transform(X_val)
+X_test = transformer.transform(X_test)
+```
+
+Adapaun setelah diterapkan transformasi Power Transformer distribusinya sebagai berikut:
+
+<div align="center">
+
+![image](https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af)  
+**Gambar 2b - Data Distribution (After Transform Data)**
+
+</div>
+
+Gambar di atas menampilkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** setelah diterapkan **PowerTransformer (Yeo-Johnson)**. Distribusi yang sebelumnya **sangat miring (_skewed_)** kini telah berubah menjadi lebih **simetris** dan mendekati **distribusi normal (Gaussian)**. 
+
+## Modelling 
+
+Pada bagian ini, proses _modelling_ akan diterapkan untuk membangun model _machine learning_ yang dapat memprediksi interaksi antara protein dan senyawa. Beberapa algoritma yang digunakan mencakup metode klasik dan _deep learning_ untuk membandingkan performa masing-masing. 
+
+Proses _modelling_ ini akan mengevaluasi performa masing-masing algoritma dengan metrik evaluasi akurasi pada data _testing_ untuk membandingkan efektivitas prediksi. Model terbaik akan digunakan sebagai dasar untuk pengembangan lebih lanjut. Berikut adalah beberapa model yang digunakan:
+
+### 1. Random Forest
+Random Forest adalah algoritma berbasis _ensemble_ yang **membangun banyak pohon keputusan** dan menggabungkan hasilnya untuk meningkatkan akurasi dan mengurangi _overfitting_.
+
+**Kelebihan:**
+- Dapat menangani data dengan dimensi tinggi dan fitur yang banyak.
+- Tidak memerlukan banyak _preprocessing_, seperti normalisasi atau _scaling_.
+- Tahan terhadap _overfitting_, terutama untuk dataset besar.
+
+**Kekurangan:**
+- Cenderung lambat untuk dataset besar dengan banyak pohon.
+- Kurang efektif dalam menangani data yang sangat _sparse_.
+
+Berikut adalah implementasi kodenya:
+
+```python
+random_forest = RandomForestClassifier(n_estimators=10, random_state=42)
+random_forest.fit(X_train, y_train)
+rf_predictions = random_forest.predict(X_test)
+rf_acc = accuracy_score(y_test, rf_predictions)
+print(f'Akurasi Algoritma Random Forest: {rf_acc}')
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Akurasi Algoritma Random Forest: 0.9222011385199241
+```
+
+Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `92,20%`
+
+### 2. K-Nearest Neighbors (KNN)
+KNN adalah algoritma yang bekerja berdasarkan **kedekatan jarak antar data** untuk menentukan kelas atau nilai prediksi.
+
+**Kelebihan:**
+- Mudah diimplementasikan dan intuitif.
+- Cocok untuk dataset yang ukurannya kecil hingga sedang.
+
+**Kekurangan:**
+- Sensitif terhadap outlier dan skala data (memerlukan normalisasi).
+- Proses prediksi lambat untuk dataset besar karena memerlukan perhitungan jarak untuk setiap data.
+
+Berikut adalah implementasi kodenya:
+
+```python
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+knn_predictions = knn.predict(X_test)
+knn_acc = accuracy_score(y_test, knn_predictions)
+print(f'Akurasi Algoritma KNN: {knn_acc}')
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Akurasi Algoritma KNN: 0.849146110056926
+```
+
+Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `84,91%`
+
+### 3. Stacked Autoencoder Deep Neural Network (SAE DNN)
+SAE DNN adalah pendekatan **_deep learning_ yang menggunakan _autoencoder_ untuk mereduksi dimensi dan mengekstrak fitur** sebelum diterapkan ke jaringan saraf dalam.
+
+**Kelebihan:**
+- Mampu menangkap hubungan non-linear yang kompleks dalam data.
+- Cocok untuk data berdimensi tinggi dan kompleks.
+- Menghasilkan fitur yang terkompresi dan relevan melalui proses _encoding_.
+
+**Kekurangan:**
+- Membutuhkan waktu pelatihan yang lebih lama dan sumber daya komputasi yang lebih besar.
+- Memerlukan tuning parameter yang rumit untuk performa optimal.
+
+Berikut adalah implementasi kodenya:
+
+```python
+def build_sae_dnn(input_shape, dropout_rate1=0.5, dropout_rate2=0.5, 
+                  units1=1024, units2=512, units3=256, units4=128, 
+                  learning_rate=0.001):
+    # Input Layer
+    inputs = Input(shape=(input_shape,))
+
+    # SAE Model
+    x = Dropout(dropout_rate1)(inputs)
+    x = Dense(units1, activation='relu')(x)
+    x = Dense(units2, activation='relu')(x)
+    encoded = Dense(units3, activation='relu')(x)
+
+    # DNN Model
+    x = BatchNormalization()(encoded)
+    x = Dropout(dropout_rate2)(x)
+    x = Dense(units4, activation='relu')(x)
+    x = Dropout(dropout_rate2)(x)
+    outputs = Dense(1, activation='sigmoid')(x)  # Output Layer
+
+    # Compile Model
+    model = Model(inputs, outputs)
+    model.compile(optimizer=Adam(learning_rate=learning_rate), 
+                  loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Akurasi Algoritma SAE-DNN: 0.8823529411764706
+```
+
+Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `88,23%`
+
+### 4. AdaBoost
+AdaBoost adalah algoritma _boosting_ yang menggabungkan beberapa model lemah (_weak learners_) untuk membentuk model yang kuat dengan meningkatkan bobot kesalahan.
+
+**Kelebihan:**
+- Memiliki performa yang baik untuk dataset dengan jumlah fitur yang besar.
+- Mengurangi bias dan meningkatkan akurasi dibandingkan model tunggal.
+
+**Kekurangan:**
+- Rentan terhadap _noise_ dan _outlier_.
+- Memerlukan waktu pelatihan yang lebih lama karena proses iteratif.
+
+Berikut adalah implementasi kodenya:
+
+```python
+ada_model = AdaBoostClassifier(random_state=42)
+ada_model.fit(X_train, y_train)
+preds = ada_model.predict(X_test)
+adab_acc = accuracy_score(y_test, preds)
+print(f'Akurasi Algoritma AdaBoost: {adab_acc}')
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Akurasi Algoritma AdaBoost: 0.8197343453510436
+```
+
+Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `81,97%`
+
+### Perbandingan Hasil Algoritma Baseline
+
+<div align="center">
+
+![image](https://github.com/user-attachments/assets/afc3f3bf-6aa5-4078-a64f-62fa9306756d)  
+**Gambar 3 - Comparison Baseline Algorithm**
+
+</div>
+
+Berdasarkan hasil perbandingan percobaan data _testing_ diatas dihasilkan:
+- Algoritma Random Forest = `92,22%`
+- Algoritma KNN = `84,91%`
+- Algoritma SAE-DNN = `88,24%`
+- Algoritma AdaBoost = `81,97%`
+
+Sehingga terpilih algoritma **Random Forest** (_Ensemble Based_) untuk dapat dilakukan _Tunning Hyperparameter_ 
+
+## Hyperparameter Tunning
+
+Pada proses ini dilakukan pencarian parameter terbaik untuk model menggunakan metode **GridSearchCV**. _Hyperparameter tuning_ bertujuan untuk meningkatkan kinerja model dengan mencoba berbagai kombinasi parameter yang telah ditentukan sebelumnya. 
+
+**GridSearchCV** digunakan karena memungkinkan eksplorasi sistematis dari kombinasi parameter yang telah ditentukan sebelumnya dengan proses yang terstruktur dan otomatis. 
+
+Beberapa parameter yang dituning dalam algoritma **Random Forest** meliputi:
+- **`n_estimators`:** Jumlah pohon keputusan dalam model.
+- **`max_depth`:** Kedalaman maksimum setiap pohon keputusan.
+- **`min_samples_split`:** Jumlah minimum sampel yang diperlukan untuk membagi node.
+- **`min_samples_leaf`:** Jumlah minimum sampel yang harus dimiliki oleh daun pohon.
+
+Berikut adalah implementasi kodenya dengan beberapa kombinasi _setting_ nilai _hyperparameter_ pada Algoritma Random Forest:
+
+```python
+# Parameter grid
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+# GridSearchCV
+rf = RandomForestClassifier(random_state=42)
+grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, scoring='accuracy', verbose=1)
+grid_search.fit(X_train, y_train)
+
+# Evaluasi pada X_val
+best_rf = grid_search.best_estimator_
+preds = best_rf.predict(X_val)
+print(f'Best Parameters: {grid_search.best_params_}')
+print(f'Random Forest Akurasi (Tuned) pada Validation: {accuracy_score(y_val, preds):.4f}')
+```
+
+Dengan _output_ sebagai berikut:
+
+```
+Fitting 5 folds for each of 108 candidates, totalling 540 fits
+Best Parameters: {'max_depth': 30, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200}
+Random Forest Akurasi (Tuned) pada Validation: 0.9426
+```
+
+Setelah dilakukan _hyperparameter tuning_ didapatkan kombinasi yang terbaik yakni:
+- `max_depth`: 30
+- `min_samples_leaf`: 1
+- `min_samples_split`: 2 
+- `n_estimators`: 200
+
+Dengan akurasi terhadap data _validation_ adalah sebesar **94,26%**
+
+## Evaluasi
+Setelah proses pelatihan dan tuning selesai, evaluasi model dilakukan dengan menggunakan **_Confusion Matrix_**. _Confusion Matrix_ memberikan gambaran performa model dengan menunjukkan jumlah prediksi yang benar dan salah untuk setiap kelas. 
+
+<div align="center">
+
+![image](https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc)  
+**Gambar 4 - Confusion Matrix**  
+_(Sumber: Rahul S, 2023 [link](https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac))_
+
+</div>
+
+**Metrik yang dievaluasi** dari _Confusion Matrix_ meliputi:
+- **True Positive (TP):** Jumlah prediksi positif yang benar.
+- **True Negative (TN):** Jumlah prediksi negatif yang benar.
+- **False Positive (FP):** Jumlah prediksi positif yang salah (_false alarm_).
+- **False Negative (FN):** Jumlah prediksi negatif yang salah (_missed detection_).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -573,4 +987,4 @@ Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-s
 
 [9]	W. Gu, X. Xie, Y. He, and Z. Zhang, “Drug-target protein interaction prediction based on AdaBoost algorithm,” Sheng Wu Yi Xue Gong Cheng Xue Za Zhi, vol. 35, no. 6, pp. 935–942, 2018, doi: 10.7507/1001-5515.201802026.
 
-
+[10]	N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer, “SMOTE: Synthetic Minority Over-sampling Technique,” J. Artif. Intell. Res., vol. 16, pp. 321–357, Jun. 2002, doi: 10.1613/jair.953.
