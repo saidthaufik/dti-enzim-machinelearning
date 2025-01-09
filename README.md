@@ -11,22 +11,19 @@ Pendekatan permodelan _machine learning_ yang pernah digunakan untuk memprediksi
 Pendekatan berbasis komputasi seperti model klasifikasi _Drug-Target Interaction_ (DTI) menawarkan solusi yang lebih efisien. Model ini memanfaatkan algoritma _machine learning_ untuk memprediksi kemungkinan interaksi antara biomolekul enzim dan senyawa bioaktif dengan tingkat akurasi yang tinggi. Keuntungan utama dari pengembangan model DTI ini adalah kemampuannya dalam mempercepat proses penemuan obat, mengurangi biaya riset, dan meningkatkan peluang menemukan obat yang lebih efektif untuk pengobatan berbagai penyakit. Dengan adanya model ini, perusahaan farmasi, peneliti bioteknologi, dan lembaga kesehatan dapat memanfaatkan data biologis yang tersedia untuk mempercepat penemuan dan pengembangan obat, khususnya yang menargetkan enzim yang memiliki peran penting dalam metabolisme dan fungsi biologis lainnya.
 
 ### Problem Statements
-1. Berdasarkan eksplorasi terhadap _dataset_, Bagaimana proses penggabungan tiga _dataset_ (protein, senyawa, dan interaksi) dapat mendukung analisis lebih lanjut?
-2. Bagaimana cara membangkitkan data negatif secara efektif untuk memperkaya variasi data dalam proses pelatihan model?
-3. Bagaimana memproses _dataset_ agar dapat digunakan untuk membangun model _machine learning_ yang efektif dalam memprediksi interaksi _drug-target_?
-4. Bagaimana cara mendapatkan model klasifikasi _Drug-Target Interaction_ (DTI) dengan performa terbaik untuk mendukung penemuan obat?
+1. Berdasarkan eksplorasi terhadap _dataset_, Bagaimana menganalisis karakteristik setiap _dataset_ untuk digunakan pada analisis _drug-target interaction_ berbasis enzim?
+2. Bagaimana memproses _dataset_ agar dapat digunakan untuk pembuatan model _machine learning_ pada analisis _drug-target interaction_ berbasis enzim?
+3. Bagaimana membangun model klasifikasi berbasis _machine learning_ yang efektif untuk analisis _drug-target interaction_ berbasis enzim dengan performa terbaik untuk analisis _drug-target interaction_ berbasis enzim?
 
 ### Goals
-1. Melakukan penggabungan tiga _dataset_ utama (protein, senyawa, dan interaksi) untuk menyusun dataset yang siap untuk analisis lebih lanjut.
-2. Mengembangkan proses pembangkitan data negatif untuk memperkuat representasi data dalam proses klasifikasi.
-3. Melakukan data _preparation_ termasuk penyeimbangan data, transformasi, dan pembagian data untuk melatih model.
-4. Melakukan pelatihan dengan _baseline model_ dari algoritma Random Forest, K-Nearest Neighbor (KNN), dan Deep Learning, kemudian meningkatkan performa model melalui _hyperparameter tuning_.
+1. Melakukan eksplorasi setiap _dataset_ yang digunakan proses analisis _drug-target interaction_ berbasis enzim secara representatif 
+2. Melakukan data _preparation_ untuk melatih model _machine learning_ pada analisis _drug-target interaction_ berbasis enzim.
+3. Melakukan pelatihan dengan _baseline model_ dari berbagai algoritma _machine learning_, kemudian meningkatkan performa model melalui _hyperparameter tuning_.
 
 ### Solution Statements
-1. Menggabungkan tiga dataset utama (protein, senyawa, dan interaksi) untuk membangun struktur dataset yang konsisten dan representatif dengan cara _key matching_
-2. Melakukan pembangkitan data negatif secara acak namun terkendali untuk meningkatkan variasi dan mengatasi ketidakseimbangan data dalam proses pelatihan model dengan pendekatan _over sampling_
-3. Menyiapkan data dengan proses _preprocessing_, meliputi penanganan ketidakseimbangan data menggunakan SMOTE, transformasi data dengan PowerTransformer, dan pembagian dataset untuk pelatihan dan pengujian.
-5. Melatih model dengan tiga algoritma: Random Forest, KNN, SAE-DNN dan AdaBoost, kemudian mengevaluasi performa model menggunakan metrik evaluasi seperti akurasi, _precision_, _recall_, dan F1-score. Model dengan performa terbaik akan disempurnakan melalui _grid search_ untuk mendapatkan _hyperparameter_ optimal sebelum digunakan dalam pengujian akhir.
+1. Untuk melakukan eksplorasi _dataset_, dilakukan analisa menggunakan analisis _univariate_ dan _mulitivariate_ untuk menemukan hubungan antar fitur-fitur
+2. Untuk mendapatkan data yang bersih dan representatif, dilakukan proses data _preparation_ meliputi penggabungan _dataset_ (_combining dataset_), pembangkitan kelas data negatif (_negative class sampling_), penyeimbangan data (_balance data_), transformasi (_transformation_), dan pembagian data (_train test split_) untuk melatih model
+3. Untuk mendapatkan model yang terbaik, digunakan empat algoritma _machine learning_ sebagai model _baseline_ diantaranya Random Forest, KNN, SAE-DNN dan AdaBoost, kemudian mengevaluasi performa model _baseline_ tersebut menggunakan metrik evaluasi akurasi. Model yang terbaik dari _baseline_ dari segi akurasi akan dilakukan _hyperparameter tuning_ dengan teknik _grid search_ untuk mendapatkan _hyperparameter_ yang optimal sebelum digunakan dalam pengujian akhir. Adapun metrik yang digunakan untuk proses pengujian akhir tersebut adalah akurasi, _precision_, _recall_, dan F1-score
 
 # Data Understanding
 Dataset ini dikenal sebagai **Yamanishi 2008** yang berisi informasi tentang interaksi biomolekuler antara enzim (protein) dan senyawa kimia. Dataset ini diperkenalkan oleh **Yamanishi et al. (2008)** dalam studi tentang prediksi interaksi _protein-ligand_ menggunakan integrasi data kimia dan genomik.  
