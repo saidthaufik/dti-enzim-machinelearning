@@ -776,12 +776,13 @@ Berikut adalah penjelasan setiap data:
 
 - **_Testing_ Data** : Digunakan untuk **pengujian akhir model** dengan data yang **belum pernah dilihat sebelumnya**. Tujuannya adalah mengukur **kinerja model** secara obyektif setelah model selesai dilatih dan divalidasi. Data ini juga mengukur metrik performa seperti akurasi, presisi, _recall_ atau **F1-score**.
 
+Berikut adalah langkah-langkahnya:
 - Mendefenisikan Fitur (x) dan Label (y)
-  ```python
-  X = final_data.drop(columns=['label'])
-  y = final_data['label']
-  ```
-  
+    ``` python
+    X = final_data.drop(columns=['label'])
+    y = final_data['label']
+    ```
+
 - Membagi data menjadi Training (70%)
   ```python
   X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -805,8 +806,8 @@ Berikut adalah penjelasan setiap data:
 
   Berdasarkan _output_ diatas :
   - Komposisi 70%
-    - Data _Training_ sebanyak **8.192 data** 
-- Komposisi 30% (masing-masing 50%)
+    - Data _Training_ sebanyak **8.192 data**
+  - Komposisi 30% (masing-masing 50%)
     - Data _Validation_ sebanyak **2.458 data**
     - Data _Testing_ sebanyak **1.054 data**
 
