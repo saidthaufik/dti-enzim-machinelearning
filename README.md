@@ -1088,11 +1088,13 @@ Dengan akurasi terhadap data _validation_ adalah sebesar **94,26%**
 Setelah proses pelatihan dan tuning selesai, evaluasi model dilakukan dengan menggunakan **_Confusion Matrix_**. _Confusion Matrix_ memberikan gambaran performa model dengan menunjukkan jumlah prediksi yang benar dan salah untuk setiap kelas. 
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc" alt="Confusion Matrix" width="500"/>  
-<br> 
-**Gambar 4 - Confusion Matrix**  
-(Sumber: Rahul Sankar, 2023 [[11](https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac)])
+  <img src="https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc" alt="Confusion Matrix" width="500"/>  
+  <br> 
+  <b>Gambar 4 - Confusion Matrix</b>  
+  <br> 
+  <i>(Sumber: Rahul Sankar, 2023 <a href="https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac">[11]</a>)</i>
 </div>
+
 
 **Metrik yang dievaluasi** dari _Confusion Matrix_ meliputi:
 - **True Positive (TP):** Jumlah prediksi positif yang benar.
@@ -1112,8 +1114,9 @@ plt.show()
 ```
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result"/>  
-**Gambar 5 - Confusion Matrix Result**
+  <img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result" width="500"/>
+  <br>
+  <b>Gambar 5 - Confusion Matrix Result</b>
 </div>
 
 Berdasarkan grafik diatas berikut adalah Hasil _Confusion Matrix_ dari Permodelan Data _Testing_ yang totalnya berjumlah **1.054 Data**:
