@@ -26,7 +26,6 @@ Pendekatan berbasis komputasi seperti model klasifikasi _Drug-Target Interaction
 3. Untuk mendapatkan model yang terbaik, digunakan empat algoritma _machine learning_ sebagai model _baseline_ diantaranya Random Forest, KNN, SAE-DNN dan AdaBoost, kemudian mengevaluasi performa model _baseline_ tersebut menggunakan metrik evaluasi akurasi. Model yang terbaik dari _baseline_ dari segi akurasi akan dilakukan _hyperparameter tuning_ dengan teknik _grid search_ untuk mendapatkan _hyperparameter_ yang optimal sebelum digunakan dalam pengujian akhir. Adapun metrik yang digunakan untuk proses pengujian akhir tersebut adalah akurasi, _precision_, _recall_, dan F1-score
 
 # Data Understanding
-# **Data Understanding**  
 Dataset ini dikenal sebagai **Yamanishi 2008** yang berisi informasi tentang interaksi biomolekuler antara enzim (protein) dan senyawa kimia. Dataset ini diperkenalkan oleh **Yamanishi et al. (2008)** dalam studi tentang prediksi interaksi _protein-ligand_ menggunakan integrasi data kimia dan genomik.  
 
 Fokus penelitian ini adalah __menganalisis hubungan spesifik antara enzim dengan senyawa__ melalui data fitur numerik yang relevan. Namun, dataset-dataset ini masih bersifat mentah atau belum mendukung pengembangan model _machine learning_ sehingga perlu di lakukan analisa lebih lanjut pada proses ini.
@@ -65,10 +64,39 @@ Data ini dapat diakses secara terbuka pada link berikut:
 Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal tentang data yang akan dianalisis, sehingga mempermudah dalam menentukan langkah-langkah selanjutnya, seperti pembersihan data, transformasi, atau pengembangan model. Dengan analisis statistik, EDA membantu memahami struktur data secara lebih mendalam dan memastikan data siap untuk proses analisis lebih lanjut
 
     - Dataset Interaction Data (`bind_orfhsa_drug_e.txt`)
-      # Melihat dimensi data
+      - Melihat dimensi data
       ```python
       print(binary_data.shape)
       ```
+      
+      outputnya adalah:
+      
+      ```
+      (2926, 2)
+      ```
+
+      Berdasarkan output diatas dataset memiliki 2926 baris dan 2 kolom. Pada bagian ini, belum dapat diketahui nama dari kolom-kolom yang ada
+
+      - Melihat tipe data
+      ```python
+      print(binary_data.info())
+      ```
+      outputnya adalah:
+        
+      ```
+      | #   | Column       | Non-Null Count | Data Type |
+      | #   | Column       | Non-Null Count | Data Type |
+      |-----|--------------|----------------|-----------|
+      | 0   | Protein_ID   | 2926 non-null  | object    |
+      | 1   | Compound_ID  | 2926 non-null  | object    |
+      ```
+
+      Berdasarkan _output_ diatas, fitur `Protein_ID` dan `Compound_ID` memilki _data type_ berbentuk `object`
+
+      
+      
+
+      
 
 
 
