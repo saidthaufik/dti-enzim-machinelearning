@@ -273,6 +273,28 @@ Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal ten
         
         Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
 
+    - Data Visualization
+    Setelah dilakukan proses Exploratory Data Analysis (EDA), teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan. Visualisasi membantu menggambarkan hubungan antar fitur, dan distribusi nilai, dengan cara yang lebih intuitif.
+
+        - Distribusi Nilai Kesamaan Senyawa pada Compound Data
+          ```python
+            flattened_values = compound_data.values.flatten()
+            plt.figure(figsize=(10, 6))
+            plt.hist(flattened_values, bins=30, color='blue', edgecolor='black')
+            plt.title("Distribusi Nilai Kesamaan Antar Senyawa")
+            plt.xlabel("Nilai Kesamaan")
+            plt.ylabel("Frekuensi")
+            plt.show()
+          ```
+
+          <div align="center">
+              <img src="![image](https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20)" alt="Nilai Kesamaan Antar Senyawa"/>  
+              **Gambar 1 - Nilai Kesamaan Antar Senyawa**
+          </div>
+          
+          
+
+
         
 
         
@@ -761,29 +783,6 @@ Length: 1112, dtype: int64
 
 Berdasarkan hasil diatas, bahwa **tidak tedapat data yang NaN atau kosong**.
 
-## Data Visualization 
-
-### Univariate Analysis 
-Univariate analysis adalah jenis analisis data yang hanya melibatkan satu variabel pada satu waktu. Tujuan utamanya adalah untuk memahami karakteristik dan distribusi dari variabel tersebut tanpa mempertimbangkan hubungan dengan variabel lain.
-
-Pada analisis ini akan melihat distribusi label pada _dataset_ dengan menggunakan visualisasi Grafik Histogram
-
-<div align="center">
-
-![image](https://github.com/user-attachments/assets/9f436263-a7de-4d43-9f9b-38a023fa1472)  
-**Gambar 1 - Univariate Analysis Categorical Column**
-
-</div>
-
-
-
-Berikut adalah sebaran distribusi label `0` (berinteraksi) dan `1` (tidak berinterasi):
-   - `0` sebanyak **5.852 data** 
-   - `1` sebanyak **2.926 data**
-
-Data ini _imbalance_ antar tiap label yang berpotensi untuk bias terhadap kelas tertentu. Hal ini akan ditangani pada **Proses Data Cleaning**
-
-## Data Cleaning
 
 #### Mengatasi Imbalance Data
 Proses ini dirancang untuk menangani **ketidakseimbangan data (_imbalance data_)** yang terjadi akibat penggunaan rasio **1:2** pada pembangkitan label negatif. Ketidakseimbangan ini dapat memengaruhi performa model, karena model cenderung lebih akurat dalam mengenali kelas mayoritas (negatif) dan mengabaikan kelas minoritas (positif). Oleh karena itu, diperlukan strategi khusus untuk menyeimbangkan jumlah data pada kedua kelas.  
