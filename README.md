@@ -60,7 +60,7 @@ Dataset ini menggabungkan tiga sumber data utama:
 Data ini dapat diakses secara terbuka pada link berikut:  
 [Yamanishi Dataset](http://web.kuicr.kyoto-u.ac.jp/supp/yoshi/drugtarget/)  
 
-- **Exploratory Data Analysis (EDA)**
+- Exploratory Data Analysis (EDA)
 Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal tentang data yang akan dianalisis, sehingga mempermudah dalam menentukan langkah-langkah selanjutnya, seperti pembersihan data, transformasi, atau pengembangan model. Dengan analisis statistik, EDA membantu memahami struktur data secara lebih mendalam dan memastikan data siap untuk proses analisis lebih lanjut
 
     - Dataset Interaction Data (`bind_orfhsa_drug_e.txt`)
@@ -92,6 +92,203 @@ Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal ten
       ```
 
       Berdasarkan _output_ diatas, fitur `Protein_ID` dan `Compound_ID` memilki _data type_ berbentuk `object`
+
+      - Melihat jumlah nilai unik
+        ```python
+        print("Unique Protein_ID:", binary_data['Protein_ID'].nunique())
+        print("Unique Compound_ID:", binary_data['Compound_ID'].nunique())
+        ```
+
+        outputnya adalah:
+        ```
+        Unique Protein_ID: 664
+        Unique Compound_ID: 445
+        ```
+
+        Berdasarkan _output_ diatas, terdapat nilai _unique_ yang sesuai dengan penjelasan **Data Understanding** diatas:
+        -  `Protein_ID`: 664 data
+        -  `Compound_ID`: 445 data
+          
+      - Memeriksa missing value di dataset
+        ```python
+        missing_values = binary_data.isnull().sum()
+        print("Jumlah missing values per kolom:")
+        print(missing_values)
+        ```
+
+        outputnya adalah:
+        ```
+        Jumlah missing values per kolom:
+        Protein_ID     0
+        Compound_ID    0
+        dtype: int64
+        ```
+
+        Berdasarkan output diatas, tidak terdapat nilai missing value terhadap semua kolom atau fitur
+
+      - Memeriksa duplikasi dalam dataset
+        ```python
+        duplicate_rows = binary_data[binary_data.duplicated()]
+        num_duplicates = duplicate_rows.shape[0]
+        print(f"Jumlah baris duplikat: {num_duplicates}")
+        ```
+
+        ```
+        Jumlah baris duplikat: 0
+        ```
+
+        Berdasarkan _output_ diatas, tidak terdapat nilai duplikat terhadap semua kolom atau fitur
+        
+    - Dataset Compound Features (`e_simmat_dc.txt`)
+      - Periksa Dimensi
+        ```python
+        print(f"Dimensi dataset: {compound_data.shape}")
+        ```
+        
+        outputnya adalah:
+        
+        ```
+        Dimensi dataset: (445, 445)
+        ```
+
+        Berdasarkan _output_ diatas, dimensi data adalah **445 Baris X 445 Kolom**
+
+      - Periksa _missing values_
+        ```python
+        missing_values = compound_data.isnull().sum().sum()
+        print(f"Jumlah nilai yang hilang: {missing_values}")
+        ```
+
+        outputnya adalah:
+        ```
+        Jumlah nilai yang hilang: 0
+        ```
+
+        Berdasarkan _output_ diatas, tidak terdapat nilai _missing value_ terhadap semua kolom atau fitur
+        
+      - _Sparsity analysis_
+        ```python
+        total_elements = compound_data.size
+        non_zero_elements = (compound_data != 0).sum().sum()
+        sparsity = 100 * (1 - non_zero_elements / total_elements)
+        print(f"Sparsity matriks: {sparsity:.2f}%")
+        ```
+
+        outputnya adalah:
+        ```
+        Sparsity matriks: 4.03%
+        ```
+
+        Sparsity matriks adalah 4.03%, itu berarti 95.97% dari elemen matriks memiliki nilai, menunjukkan bahwa matriks ini tidak terlalu sparse (jarang). Sehingga, memungkinkan analisis langsung.
+
+        - Menampilkan nilai _min_, _max_, dan mean untuk setiap kolom
+        ```python
+        min_values = compound_data.min().min()
+        max_values = compound_data.max().max()
+        mean_values = compound_data.mean().mean()
+        
+        print(f"Nilai minimum dalam dataset: {min_values}")
+        print(f"Nilai maksimum dalam dataset: {max_values}")
+        print(f"Rata-rata nilai dalam dataset: {mean_values}")
+        ```
+
+        outputnya adalah:
+        ```
+        Nilai minimum dalam dataset: 0.0
+        Nilai maksimum dalam dataset: 1.0
+        Rata-rata nilai dalam dataset: 0.1721487835778312
+        ```
+
+        Berdasarkan _output_ diatas bahwa:
+        - nilai minimum dari dataset `compound_data` adalah 0
+        - nilai maksimum dari dataset `compond_data` adalah 1
+        - nilai rata-rata dari dataset `compund_data` adalah 0,172
+        
+        Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
+
+    - Protein Features Data (`e_simmat_dg.txt`) 
+      - Periksa Dimensi
+        ```python
+        print(f"Dimensi dataset: {protein_data.shape}")
+        ```
+        
+        outputnya adalah:
+        
+        ```
+        Dimensi dataset: (664, 664)
+        ```
+
+        Berdasarkan _output_ diatas, dimensi data adalah **664 Baris X 664 Kolom**
+
+      - Periksa Dimensi
+        ```python
+        missing_values = protein_data.isnull().sum().sum()
+        print(f"Jumlah nilai yang hilang: {missing_values}")
+        ```
+
+        outputnya adalah:
+        ```
+        Jumlah nilai yang hilang: 0
+        ```
+
+        Berdasarkan _output_ diatas, tidak terdapat nilai _missing value_ terhadap semua kolom atau fitur
+
+      - _Sparsity analysis_
+        ```python
+        total_elements = protein_data.size
+        non_zero_elements = (protein_data != 0).sum().sum()
+        sparsity = 100 * (1 - non_zero_elements / total_elements)
+        print(f"Sparsity matriks: {sparsity:.2f}%")
+        ```
+
+        outputnya adalah:
+        ```
+        Sparsity matriks: 0.00%
+        ```
+
+        Sparsity matriks adalah **0%, itu berarti 100% dari elemen matriks memiliki nilai**. Sehingga, memungkinkan analisis langsung.
+
+      - Menampilkan nilai _min_, _max_, dan _mean_ untuk setiap kolom
+        ```python
+        min_values = compound_data.min().min()
+        max_values = compound_data.max().max()
+        mean_values = compound_data.mean().mean()
+        
+        print(f"Nilai minimum dalam dataset: {min_values}")
+        print(f"Nilai maksimum dalam dataset: {max_values}")
+        print(f"Rata-rata nilai dalam dataset: {mean_values}")
+        ```
+
+        outputnya adalah:
+        ```
+        Nilai minimum dalam dataset: 0.0
+        Nilai maksimum dalam dataset: 1.0
+        Rata-rata nilai dalam dataset: 0.1721487835778312
+        ```
+
+        Berdasarkan _output_ diatas bahwah 
+        - nilai minimum dari dataset `protein_data` adalah 0
+        - nilai maksimum dari dataset `protein_data` adalah 1
+        - nilai rata-rata dari dataset `protein_data` adalah 0,172
+        
+        Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
+
+        
+
+        
+
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    
 
       
       
