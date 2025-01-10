@@ -312,68 +312,15 @@ Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal ten
 
           Sama seperti _output_ sebelumnya **sangat miring ke kanan (_positively skewed_)**, sehingga penangannya adalah Transformasi data yang akan dilakukan di **Data Preparation**
 
-          
-
-
-          
-
-          
-          
-
-
-        
-
-        
-
-        
-        
-
-        
-
-        
-
-        
-
-        
-
-    
-
-      
-      
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Data Preparation
-**Data Preparation** adalah proses awal untuk mempersiapkan data agar siap digunakan dalam analisis. Dataset ini saat ini masih terbagi menjadi tiga bagian utama, yaitu **Interaction Data**, **Compound Features Data**, dan **Protein Features Data** (dapat dilihat saat proses _import data_). Ketiga bagian tersebut menyimpan informasi yang saling melengkapi, namun belum terintegrasi menjadi satu _dataset_ yang utuh dan siap digunakan.
+
+## **Proses Penggabungan Data**
+Dataset ini saat ini masih terbagi menjadi tiga bagian utama, yaitu **Interaction Data**, **Compound Features Data**, dan **Protein Features Data** (dapat dilihat saat proses _import data_). Ketiga bagian tersebut menyimpan informasi yang saling melengkapi, namun belum terintegrasi menjadi satu _dataset_ yang utuh dan siap digunakan.
 
 Penggabungan diperlukan karena:  
 - **Interaction Data** hanya menyediakan pasangan interaksi antara enzim dan senyawa tanpa detail fitur.  
 - **Compound Features Data** berisi deskripsi kimiawi dari senyawa, tetapi tidak memiliki informasi tentang interaksi atau enzim yang relevan.  
-- **Protein Features Data** menyimpan karakteristik biologis enzim, tetapi juga terpisah dari informasi senyawa.  
-
-### **Proses Penggabungan Data**
+- **Protein Features Data** menyimpan karakteristik biologis enzim, tetapi juga terpisah dari informasi senyawa
 Agar model machine learning dapat memahami hubungan antara senyawa dan enzim, semua fitur ini harus digabungkan menjadi satu dataset yang saling terhubung. Adapun tahapan Proses Penggabungan Data melibatkan beberapa langkah sebagai berikut:
 #### **1. Proses _Key Matching_**  
 
@@ -386,7 +333,7 @@ berdasarkan `Protein_ID` dan `Compound_ID` untuk menghasilkan satu dataset yang 
 
 - **1.1. Menambahkan Label Positif**
     - Setiap pasangan `Protein_ID` dan `Compound_ID` di dataset **Interaction Data** merupakan interaksi positif.
-    - Label dengan nilai **1** ditambahkan untuk menandai pasangan ini sebagai data positif.
+    - Label dengan nilai **1** ditambahkan untuk menandai pasangan ini sebagai data positif.  
       
       ```python
       binary_data['Label'] = 1
@@ -527,7 +474,7 @@ berdasarkan `Protein_ID` dan `Compound_ID` untuk menghasilkan satu dataset yang 
 
       Hal ini tidak bisa Model _machine learning_ yang dilatih hanya dengan data positif akan gagal membedakan pola interaksi yang benar dan salah, sehingga menghasilkan prediksi yang bias. Sehingga, pada proses kali ini akan dilakukan **Pembangkitan Label Negatif** dengan menggunakan teknik **Negatif Sampling**
 
-### **Proses Pembangkitan Label Negatif**
+## **Proses Pembangkitan Label Negatif**
 
 Dataset awal hanya memiliki label **positif (1)** yang menunjukkan adanya interaksi antara **Protein** dan **Compound**. Untuk melatih model _machine learning_ yang mampu membedakan interaksi **positif** dan **negatif**, diperlukan tambahan **label negatif (0)** yang menunjukkan pasangan **Protein-Compound** yang tidak memiliki interaksi.  
 
@@ -536,8 +483,8 @@ Dataset awal hanya memiliki label **positif (1)** yang menunjukkan adanya intera
 2. **Variasi yang Memadai** – Dengan lebih banyak data negatif, model dapat mempelajari pola yang lebih umum dan menghindari _overfitting_ terhadap data positif.  
 3. **Keseimbangan Relatif** – Meskipun data negatif lebih banyak, rasio 1:2 tetap menjaga dataset dalam skala yang bisa diolah oleh model tanpa beban komputasi yang berlebihan.
 
-#### **Langkah-Langkah:**
-#### 1. Kombinasi Semua Pasangan (_Negative Sampling_)
+**Langkah-Langkah:**
+- 1. Kombinasi Semua Pasangan (_Negative Sampling_)
 Proses ini membuat semua kombinasi pasangan antara `Protein_ID` dan `Compound_ID` dengan kode sebagai berikut:
 
 ```python
@@ -569,7 +516,7 @@ _295480 rows × 2 columns_
 
 Berhasil membuat **295.480 kemungkinan kombinasi** antara `protein_ID` dan `Compound_ID` 
 
-#### 2. Filter Pasangan Negatif
+- 2. Filter Pasangan Negatif
 Proses ini **menghapus pasangan yang sudah ada** di data positif (`positive_pairs`) dengan cara merger berdasarkan `all_combinations` dan `positive_pairs`untuk membentuk data negatif (`negative_samples`) dengan kode sebagai berikut:
 
 ```python
@@ -618,7 +565,7 @@ _292554 rows × 1112 columns_
 
 Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Negatif**
 
-#### 4. Gabungkan Fitur Protein dan Compound untuk Data Positif
+- 4. Gabungkan Fitur Protein dan Compound untuk Data Positif
 Proses ini menggabungkan fitur protein dan _compound_ (senyawa) berdasarkan `Protein_ID` dan `Compound_ID`pada **Data Positif** dengan kode sebagai berikut:
 
 ```python
@@ -651,7 +598,7 @@ _2926 rows × 1112 columns_
 
 Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Positif**
 
-#### 5. Atur Rasio Negatif
+- 5. Atur Rasio Negatif
 Proses ini mengatur jumlah data negatif sesuai dengan rasio yang diinginkan, dalam hal ini menggunakan **Rasio 1:2** 
 
 Beberapa penelitian dibidang Bioinformatika menggunakan Rasio tersebut sebagai **Rasio yang cukup optimal** untuk digunakan, Namun tetap mempertimbangkan komputasi.
@@ -695,7 +642,7 @@ Berhasil mendapatkan data dengan rasio 1:2 sebanyak :
 - data dengan **kelas positif** (`1`) sebanyak **2926 pasangan interaksi**
 - data dengan **kelas negatif** (`2`) sebanyak **5852 pasangan interaksi**
 
-#### 6. Gabungkan Data Positif dan Negatif
+- 6. Gabungkan Data Positif dan Negatif
 Proses ini menggabungkan semua **Data Positif** dan **Data Negatif** ke dalam satu _dataframe_ dengan kode sebagai berikut:
 
 ```python
@@ -730,96 +677,36 @@ Sehingga total data adalah:
 
 Setelah dilakukan **Proses Pembangkitan Data Negatif** maka dilanjutkan Proses **Exploratory Data Analysis** 
 
-## Exploratory Data Analysis (EDA)
-Setelah mempersiapkan Data, EDA bertujuan untuk memberikan wawasan awal tentang data yang akan dianalisis, sehingga mempermudah dalam menentukan langkah-langkah selanjutnya, seperti pembersihan data, transformasi, atau pengembangan model. Dengan menggunakan teknik visualisasi dan analisis statistik, EDA membantu memahami struktur data secara lebih mendalam dan memastikan data siap untuk proses analisis lebih lanjut. 
+## Mengatasi Imbalance Data
+Proses ini dirancang untuk menangani **ketidakseimbangan data (_imbalance data_)** yang terjadi akibat penggunaan rasio **1:2** pada pembangkitan label negatif. Ketidakseimbangan ini dapat memengaruhi performa model, karena model cenderung lebih akurat dalam mengenali kelas mayoritas (negatif) dan mengabaikan kelas minoritas (positif). Oleh karena itu, diperlukan strategi khusus untuk menyeimbangkan jumlah data pada kedua kelas.
 
-Berikut adalahh beberapa teknik EDA yang dilakukan:
-#### Deskripsi Data
+Berikut setelah dilakukan pengecekan kelas data menggunakan histrogram:
 
-Dengan kode sebagai berikut:
-
-```python
-final_combined_data.describe()
+``` python
+final_combined_data['Label'].value_counts().plot(kind='bar', color=['salmon', 'skyblue'], figsize=(6, 4))
+plt.title('Distribusi Label')
+plt.xlabel('Label')
+plt.ylabel('Jumlah')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
 ```
 
-Dengan _output_ sebagai berikut:
+<div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/0fe6ff04-4df5-4490-89ae-545e7b25d12b" alt="Distribusi Kelas Label" width="500">
+    <p><b>Gambar 2 - Distribusi Kelas Label</b></p>
+</div>
 
-| Statistic | Label   | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | hsa1020 | hsa1021 | ...   | D04092  | D04197  | D04292  | D04966  | D04983  | D05341  | D05353  | D05407  | D05458  | D06238  |
-|-----------|---------|---------|---------|----------|---------|---------|----------|---------|---------|---------|-------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
-| count     | 8778.000| 8778.000| 8778.000| 8778.000 | 8778.000| 8778.000| 8778.000 | 8778.000| 8778.000| 8778.000| ...   | 8778.000| 8778.000| 8778.000| 8778.000| 8778.000| 8778.000| 8778.000| 8778.000| 8778.000| 8778.000|
-| mean      | 0.333   | 0.022   | 0.020   | 0.017    | 0.039   | 0.038   | 0.025    | 0.035   | 0.037   | 0.035   | ...   | 0.223   | 0.155   | 0.174   | 0.061   | 0.104   | 0.088   | 0.220   | 0.158   | 0.191   | 0.204   |
-| std       | 0.471   | 0.046   | 0.033   | 0.039    | 0.068   | 0.068   | 0.044    | 0.055   | 0.059   | 0.061   | ...   | 0.097   | 0.095   | 0.084   | 0.054   | 0.104   | 0.090   | 0.108   | 0.081   | 0.103   | 0.096   |
-| min       | 0.000   | 0.009   | 0.008   | 0.007    | 0.010   | 0.010   | 0.005    | 0.010   | 0.010   | 0.010   | ...   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   | 0.000   |
-| 25%       | 0.000   | 0.016   | 0.015   | 0.013    | 0.018   | 0.018   | 0.011    | 0.017   | 0.018   | 0.017   | ...   | 0.171   | 0.106   | 0.130   | 0.034   | 0.042   | 0.029   | 0.152   | 0.115   | 0.122   | 0.137   |
-| 50%       | 0.000   | 0.019   | 0.018   | 0.015    | 0.021   | 0.021   | 0.013    | 0.020   | 0.021   | 0.020   | ...   | 0.225   | 0.143   | 0.175   | 0.056   | 0.076   | 0.067   | 0.231   | 0.149   | 0.179   | 0.213   |
-| 75%       | 1.000   | 0.023   | 0.021   | 0.018    | 0.028   | 0.027   | 0.017    | 0.027   | 0.028   | 0.026   | ...   | 0.286   | 0.191   | 0.214   | 0.083   | 0.125   | 0.125   | 0.293   | 0.194   | 0.243   | 0.270   |
-| max       | 1.000   | 1.000   | 1.000   | 1.000    | 1.000   | 1.000   | 1.000    | 1.000   | 1.000   | 1.000   | ...   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   | 1.000   |
+Berikut adalah sebaran distribusi label `0` (berinteraksi) dan `1` (tidak berinterasi):
+   - `0` sebanyak **5.852 data** 
+   - `1` sebanyak **2.926 data**
 
-_8 rows × 1110 columns_
-
-Fungsi di atas menyajikan ringkasan statistik deskriptif untuk setiap kolom dalam dataset, yang meliputi:  
-- **`count`**: Jumlah data atau entri yang tersedia dalam suatu kolom.  
-- **`mean`**: Nilai rata-rata dari semua data pada kolom tersebut.  
-- **`std`**: Standar deviasi yang menunjukkan sebaran data dari nilai rata-rata.  
-- **`min`**: Nilai terkecil yang ditemukan dalam kolom.  
-- **`25%`**: Kuartil pertama (Q1), yaitu nilai di bawah 25% data terendah.  
-- **`50%`**: Kuartil kedua (Q2) atau median, yang merupakan titik tengah data.  
-- **`75%`**: Kuartil ketiga (Q3), yang mencakup 75% data di bawahnya.  
-- **`max`**: Nilai terbesar yang terdapat dalam kolom tersebut.
-
-#### Cek Data Duplikat
-
-Dengan kode sebagai berikut:
-
-```python
-final_combined_data.duplicated().sum()  
-```
-
-Dengan _output_ sebagai berikut:
-```
-0 
-```
-
-Berdasarkan hasil diatas, bahwa **tidak tedapat data yang duplikat**.
-
-#### Cek Data Kosong / NaN
-
-Dengan kode sebagai berikut:
-
-```python
-final_combined_data.isnull().sum()
-```
-
-Dengan _output_ sebagai berikut:
-
-```
-Protein_ID       0
-Compound_ID      0
-Label            0
-hsa10            0
-hsa100           0
-...             ..
-D05341           0
-D05353           0
-D05407           0
-D05458           0
-D06238           0
-Length: 1112, dtype: int64
-```
-
-Berdasarkan hasil diatas, bahwa **tidak tedapat data yang NaN atau kosong**.
-
-
-#### Mengatasi Imbalance Data
-Proses ini dirancang untuk menangani **ketidakseimbangan data (_imbalance data_)** yang terjadi akibat penggunaan rasio **1:2** pada pembangkitan label negatif. Ketidakseimbangan ini dapat memengaruhi performa model, karena model cenderung lebih akurat dalam mengenali kelas mayoritas (negatif) dan mengabaikan kelas minoritas (positif). Oleh karena itu, diperlukan strategi khusus untuk menyeimbangkan jumlah data pada kedua kelas.  
-
-Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-sampling_** menggunakan teknik **SMOTE (Synthetic Minority Over-sampling Technique)** yang dikembangkan oleh Chawla et al, 2002 [[10]((https://dl.acm.org/doi/10.5555/1622407.1622416)]
+Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-sampling_** menggunakan teknik **SMOTE (Synthetic Minority Over-sampling Technique)** yang dikembangkan oleh [Chawla et al, 2002](https://dl.acm.org/doi/10.5555/1622407.1622416) 
 
 **SMOTE** adalah teknik **_oversampling_** yang digunakan untuk **menambah jumlah sampel pada kelas minoritas** secara sintetis. **SMOTE** menciptakan data baru dengan **menginterpolasi sampel yang sudah ada** berdasarkan **k-tetangga terdekat (k-nearest neighbors)**
 
-#### Langkah-Langkahnya adalah:
+**Langkah-langkahnya:**
 
-#### 1. Pisahkan Fitur (x) dan Label (y)
+- 1. Pisahkan Fitur (x) dan Label (y)
 Proses ini menghapus kolom non-numerik (`Protein_ID` dan `Compound_ID`) 
 
 ```python
@@ -827,14 +714,14 @@ X = final_data.drop(['Label', 'Protein_ID', 'Compound_ID'], axis=1)
 y = final_data['Label']  
 ```
 
-#### 2. Terapkan SMOTE untuk _oversampling_ Data Positif
+- 2. Terapkan SMOTE untuk _oversampling_ Data Positif
 
 ```python
 smote = SMOTE(random_state=42)
 X_res, y_res = smote.fit_resample(X, y)  
 ```
 
-#### 3. Cek Distribusi Label Sebelum dan Sesudah SMOTE
+- 3. Cek Distribusi Label Sebelum dan Sesudah SMOTE
 
 ```python
 print('Distribusi label sebelum SMOTE:', Counter(y))
@@ -852,7 +739,7 @@ Setelah dilakukan proses SMOTE distribusi data menjadi _balance_ yakni:
    - `0` sebanyak **5.852 data** 
    - `1` sebanyak **5.852 data**
 
-#### 4. Membuat Data Baru Hasil SMOTE
+- 4. Membuat Data Baru Hasil SMOTE
 
 ```python
 final_data = pd.concat([pd.DataFrame(X_res), pd.Series(y_res, name='Label')], axis=1)
@@ -882,7 +769,7 @@ _11704 rows × 1110 columns_
 
 Berhasil membuat data baru Hasil SMOTE dengan variabel `final_data`
 
-## Pembagian Data Training, Data Testing dan Data Validation
+## Pembagian Data Training, Data Testing dan Data Validation (_Train Test Split_)
 
 Pembagian data menjadi **Training**, **Testing**, dan **Validation** merupakan langkah penting dalam proses pembangunan model **_machine learning_**. 
 
@@ -896,26 +783,26 @@ Berikut adalah penjelasan setiap data:
 
 - **_Testing_ Data** : Digunakan untuk **pengujian akhir model** dengan data yang **belum pernah dilihat sebelumnya**. Tujuannya adalah mengukur **kinerja model** secara obyektif setelah model selesai dilatih dan divalidasi. Data ini juga mengukur metrik performa seperti akurasi, presisi, _recall_ atau **F1-score**.
 
-#### Mendefenisikan Fitur (x) dan Label (y)
+- Mendefenisikan Fitur (x) dan Label (y)
 
 ```python
 X = final_data.drop(columns=['label'])
 y = final_data['label']
 ```
 
-#### Membagi data menjadi Training (70%)
+- Membagi data menjadi Training (70%)
 
 ```python
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 ```
 
-#### Membagi Sisa Data menjadi Validation (20%) dan Testing (10%)
+- Membagi Sisa Data menjadi Validation (20%) dan Testing (10%)
 
 ```python
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.3, random_state=42)
 ```
 
-#### Menampilkan Hasil Pembagian Data
+- Menampilkan Hasil Pembagian Data
 
 ```python
 print(f"Training: {len(X_train)}, Validation: {len(X_val)}, Testing: {len(X_test)}")
@@ -939,26 +826,13 @@ Berdasarkan _output_ diatas :
 
 Tujuannya adalah untuk **meningkatkan performa model** dengan menghilangkan skala yang tidak konsisten, distribusi yang tidak normal, atau _outlier_ yang ekstrem.
 
-Sebelum itu, kita akan **melihat persebaran datanya** dahulu untuk melihat metode Data Transformasi apa yang cocok untuk kasus data ini
+- Penerapan Power Transformer
 
-#### Mengecek Persebaran Data
+Berdasarkan analisis pada **Data Visualization** ditemukan bahwa persebaran data pada `compound_data` dan `protein_data`**sangat miring ke kanan (_positively skewed_)** Sehingga dilakukan Transformasi Data
 
-<div align="center">
+Pada proses ini dilakukan Transformasi Data dengan menggunakan **PowerTransformer (Yeo-Johnson)** yang bertujuan untuk **menormalkan distribusi**, sehingga fitur menjadi lebih **simetris** dan **stabil**, yang diharapkan dapat meningkatkan performa model.
 
-![image](https://github.com/user-attachments/assets/14f6815e-9a2d-4a5a-8144-635bfa79ef85)  
-**Gambar 2a - Data Distribution (Before Transform Data)**
-
-</div>
-
-Gambar di atas menunjukkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** sebelum transformasi, di mana ketiganya memiliki distribusi yang **sangat miring ke kanan (_positively skewed_)**. 
-
-Distribusi seperti ini dapat menyebabkan masalah pada algoritma _machine learning_ yang mengasumsikan **distribusi normal (Gaussian)**, serta membuat model rentan terhadap **bias** akibat _outlier_. 
-
-Oleh karena itu, transformasi data seperti **PowerTransformer (Yeo-Johnson)** diperlukan untuk **menormalkan distribusi**, sehingga fitur menjadi lebih **simetris** dan **stabil**, yang diharapkan dapat meningkatkan performa model.
-
-#### Penerapan Power Transformer
-
-Adapun kode dari transformasi Power Transformer adalah sebagai berikut:
+Berikut adalah penerapannya:
 
 ```python
 transformer = PowerTransformer(method='yeo-johnson')  
@@ -967,24 +841,44 @@ X_val = transformer.transform(X_val)
 X_test = transformer.transform(X_test)
 ```
 
-Adapaun setelah diterapkan transformasi Power Transformer distribusinya sebagai berikut:
+Berhasil menerapkan Transformasi Data **PowerTransformer (Yeo-Johnson)**
 
-<div align="center">
+```python
+plt.figure(figsize=(15, 5))
 
-![image](https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af)  
-**Gambar 2b - Data Distribution (After Transform Data)**
+# Training
+plt.subplot(1, 3, 1)
+sns.histplot(X_train[:, 0], bins=50, kde=True, color='green')
+plt.title('Training - Sesudah Transformasi')
 
-</div>
+# Validation
+plt.subplot(1, 3, 2)
+sns.histplot(X_val[:, 0], bins=50, kde=True, color='green')
+plt.title('Validation - Sesudah Transformasi')
+
+# Testing
+plt.subplot(1, 3, 3)
+sns.histplot(X_test[:, 0], bins=50, kde=True, color='green')
+plt.title('Testing - Sesudah Transformasi')
+
+plt.tight_layout()
+plt.show()
+```
+
+Berikut adalah outputnya:
+
+<div style="text-align: center;">
+    <img src="https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af" alt="Distribusi Kelas Label" width="500">
+    <p><b>Gambar 3 - Data Distribution (After Transform Data)</b></p>
+</div
 
 Gambar di atas menampilkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** setelah diterapkan **PowerTransformer (Yeo-Johnson)**. Distribusi yang sebelumnya **sangat miring (_skewed_)** kini telah berubah menjadi lebih **simetris** dan mendekati **distribusi normal (Gaussian)**. 
 
-## Modelling 
+# Model Development 
 
-Pada bagian ini, proses _modelling_ akan diterapkan untuk membangun model _machine learning_ yang dapat memprediksi interaksi antara protein dan senyawa. Beberapa algoritma yang digunakan mencakup metode klasik dan _deep learning_ untuk membandingkan performa masing-masing. 
+Pada bagian ini, proses akan diterapkan untuk membangun model _machine learning_ yang dapat memprediksi interaksi antara protein dan senyawa. Beberapa algoritma yang digunakan mencakup metode klasik dan _deep learning_ 
 
-Proses _modelling_ ini akan mengevaluasi performa masing-masing algoritma dengan metrik evaluasi akurasi pada data _testing_ untuk membandingkan efektivitas prediksi. Model terbaik akan digunakan sebagai dasar untuk pengembangan lebih lanjut. Berikut adalah beberapa model yang digunakan:
-
-### 1. Random Forest
+- 1. Random Forest
 Random Forest adalah algoritma berbasis _ensemble_ yang **membangun banyak pohon keputusan** dan menggabungkan hasilnya untuk meningkatkan akurasi dan mengurangi _overfitting_.
 
 **Kelebihan:**
@@ -1000,21 +894,9 @@ Berikut adalah implementasi kodenya:
 
 ```python
 random_forest = RandomForestClassifier(n_estimators=10, random_state=42)
-random_forest.fit(X_train, y_train)
-rf_predictions = random_forest.predict(X_test)
-rf_acc = accuracy_score(y_test, rf_predictions)
-print(f'Akurasi Algoritma Random Forest: {rf_acc}')
 ```
 
-Dengan _output_ sebagai berikut:
-
-```
-Akurasi Algoritma Random Forest: 0.9222011385199241
-```
-
-Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `92,20%`
-
-### 2. K-Nearest Neighbors (KNN)
+- 2. K-Nearest Neighbors (KNN)
 KNN adalah algoritma yang bekerja berdasarkan **kedekatan jarak antar data** untuk menentukan kelas atau nilai prediksi.
 
 **Kelebihan:**
@@ -1029,19 +911,7 @@ Berikut adalah implementasi kodenya:
 
 ```python
 knn = KNeighborsClassifier(n_neighbors=5)
-knn.fit(X_train, y_train)
-knn_predictions = knn.predict(X_test)
-knn_acc = accuracy_score(y_test, knn_predictions)
-print(f'Akurasi Algoritma KNN: {knn_acc}')
 ```
-
-Dengan _output_ sebagai berikut:
-
-```
-Akurasi Algoritma KNN: 0.849146110056926
-```
-
-Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `84,91%`
 
 ### 3. Stacked Autoencoder Deep Neural Network (SAE DNN)
 SAE DNN adalah pendekatan **_deep learning_ yang menggunakan _autoencoder_ untuk mereduksi dimensi dan mengekstrak fitur** sebelum diterapkan ke jaringan saraf dalam.
@@ -1076,23 +946,9 @@ def build_sae_dnn(input_shape, dropout_rate1=0.5, dropout_rate2=0.5,
     x = Dense(units4, activation='relu')(x)
     x = Dropout(dropout_rate2)(x)
     outputs = Dense(1, activation='sigmoid')(x)  # Output Layer
-
-    # Compile Model
-    model = Model(inputs, outputs)
-    model.compile(optimizer=Adam(learning_rate=learning_rate), 
-                  loss='binary_crossentropy', metrics=['accuracy'])
-    return model
 ```
 
-Dengan _output_ sebagai berikut:
-
-```
-Akurasi Algoritma SAE-DNN: 0.8823529411764706
-```
-
-Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `88,23%`
-
-### 4. AdaBoost
+- 4. AdaBoost
 AdaBoost adalah algoritma _boosting_ yang menggabungkan beberapa model lemah (_weak learners_) untuk membentuk model yang kuat dengan meningkatkan bobot kesalahan.
 
 **Kelebihan:**
@@ -1107,33 +963,82 @@ Berikut adalah implementasi kodenya:
 
 ```python
 ada_model = AdaBoostClassifier(random_state=42)
+```
+
+# Evaluasi
+
+Proses Evaluasi ini akan mengevaluasi performa masing-masing algoritma dengan metrik evaluasi akurasi pada data _testing_ untuk membandingkan efektivitas prediksi pada model _baseline_. Model _baseline_ terbaik akan digunakan sebagai dasar untuk pengembangan lebih lanjut. Berikut adalah beberapa model yang digunakan:
+
+## Evaluasi Algoritma _Baseline_
+
+- Evaluasi Baseline Algoritma Random Forest
+random_forest.fit(X_train, y_train)
+rf_predictions = random_forest.predict(X_test)
+rf_acc = accuracy_score(y_test, rf_predictions)
+print(f'Akurasi Algoritma Random Forest: {rf_acc}')
+
+Outputnya adalah:
+
+```
+Akurasi Algoritma Random Forest: 0.9222011385199241
+```
+
+Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `92,20%`
+
+- Evaluasi Baseline Algoritma KNN
+knn.fit(X_train, y_train)
+knn_predictions = knn.predict(X_test)
+knn_acc = accuracy_score(y_test, knn_predictions)
+print(f'Akurasi Algoritma KNN: {knn_acc}')
+
+Outputnya adalah:
+
+```
+Akurasi Algoritma KNN: 0.849146110056926
+```
+
+Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `84,91%`
+
+- Evaluasi Baseline Algoritma SAE-DNN
+model = build_sae_dnn(input_shape=X_train.shape[1])
+model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
+preds = (model.predict(X_test) > 0.5).astype(int)
+saednn_acc = accuracy_score(y_test, preds)
+print(f'Akurasi Algoritma SAE-DNN: {saednn_acc}')
+
+Outputnya adalah:
+
+```
+Akurasi Algoritma SAE-DNN: 0.9013282732447818
+```
+
+Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `90,13%`
+
+- Evaluasi Baseline Algoritma AdaBoost
 ada_model.fit(X_train, y_train)
 preds = ada_model.predict(X_test)
 adab_acc = accuracy_score(y_test, preds)
 print(f'Akurasi Algoritma AdaBoost: {adab_acc}')
-```
 
-Dengan _output_ sebagai berikut:
+Outputnya adalah:
 
 ```
 Akurasi Algoritma AdaBoost: 0.8197343453510436
 ```
 
-Berdasarkan percobaan data _testing_ diatas menghasilkan akurasi sebesar `81,97%`
+Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `81,97%`
 
-### Perbandingan Hasil Algoritma Baseline
+## Perbandingan Hasil Algoritma Baseline
 
 <div align="center">
-
-![image](https://github.com/user-attachments/assets/afc3f3bf-6aa5-4078-a64f-62fa9306756d)  
-**Gambar 3 - Comparison Baseline Algorithm**
-
+![image](https://github.com/user-attachments/assets/9ec07b8e-701d-4688-b6ce-090fe0ec5d2b)
+**Gambar 4 - Comparison Baseline Algorithm**
 </div>
 
 Berdasarkan hasil perbandingan percobaan data _testing_ diatas dihasilkan:
 - Algoritma Random Forest = `92,22%`
 - Algoritma KNN = `84,91%`
-- Algoritma SAE-DNN = `88,24%`
+- Algoritma SAE-DNN = `90,13%`
 - Algoritma AdaBoost = `81,97%`
 
 Sehingga terpilih algoritma **Random Forest** (_Ensemble Based_) untuk dapat dilakukan _Tunning Hyperparameter_ 
@@ -1321,4 +1226,4 @@ yang sebelumnya adalah **92,22%** (tanpa _hyperparameter tuning_)
 
 [10]	N. V. Chawla, K. W. Bowyer, L. O. Hall, and W. P. Kegelmeyer, “SMOTE: Synthetic Minority Over-sampling Technique,” J. Artif. Intell. Res., vol. 16, pp. 321–357, Jun. 2002, doi: 10.1613/jair.953.
 
-[11] [1] A. Sankar, "How is Confusion Matrix Useful in Classification Problems?," Medium, Dec. 22, 2019. [Online]. Available: https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac. 
+[11] A. Sankar, "How is Confusion Matrix Useful in Classification Problems?," Medium, Dec. 22, 2019. [Online]. Available: https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac. 
