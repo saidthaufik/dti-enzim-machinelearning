@@ -1191,6 +1191,23 @@ Dengan Akurasi terhadap data _testing_ adalah sebesar **93,36%** dengan _score_ 
 
 yang sebelumnya adalah **92,22%** (tanpa _hyperparameter tuning_)
 
+# Kesimpulan 
+
+## Apakah sudah menjawab setiap _problem statment_?
+1. [Poin 1] Ya, eksplorasi dataset telah dilakukan dengan analisis statistik dan visualisasi untuk memahami karakteristik dataset. Langkah ini memungkinkan identifikasi pola hubungan antar fitur yang relevan
+2. [Poin 2] Ya, proses _data preparation_ telah yakni penggabungan dataset dengan menggunakan _key matching_, pembangkitan kelas data negatif menggunakan **_negative sampling 1 : 2_**, penyeimbangan kelas data (_data imbalance_), transformasi, dan pembagian data untuk melatih (**_train test split_**) model
+3. [Poin 3] Ya, _baseline model_ telah dibangun menggunakan algoritma seperti Random Forest, KNN, SAE-DNN, dan AdaBoost. Kemudian, _Hyperparameter tuning_ dilakukan untuk meningkatkan performa model terbaik pada **Algoritma Random Forest**
+
+## Apakah berhasil mencapai setiap _goals_ yang diharapkan?
+1. [Poin 1] Tercapai. Eksplorasi dilakukan dengan analisis statistik, histogram, dan distribusi data untuk memahami pola hubungan
+2. [Poin 2] Tercapai. Tahapan data preparation yakni penggabungan dataset dengan menggunakan _key matching_, pembangkitan kelas data negatif menggunakan **_negative sampling 1 : 2_**, penyeimbangan kelas data (_data imbalance_) menggunakan **SMOTE**, transformasi menggunakan **Yeo-Johnson**, dan pembagian data untuk melatih (**_train test split_** model
+3. [Poin 3] Tercapai. Baseline model dilatih dan model terbaik dioptimalkan menggunakan _grid search_ untuk meningkatkan akurasi, _precision_, _recall_, dan F1-score
+
+## Apakah setiap _solusi statement_ yang kamu rencanakan berdampak? Jelaskan!
+1. [Poin 1] Memberikan pemahaman mendalam tentang pola hubungan antar fitur, sehingga model dapat menangkap pola-pola penting dalam data
+2. [Poin 2] Memastikan data yang bersih, representatif, dan seimbang, sehingga meningkatkan performa model dalam memprediksi interaksi drug-target
+3. [Poin 3] _Baseline_ model memberikan tolok ukur performa awal yang menghasilkan algoritma **Random Forest**, dan _hyperparameter tuning_ membantu mengidentifikasi parameter optimal yang meningkatkan hasil pengujian akhir.
+
 # Referensi
 [1]	F. Cheng et al., “Prediction of drug-target interactions and drug repositioning via network-based inference,” PLoS Comput. Biol., vol. 8, no. 5, 2012, doi: 10.1371/journal.pcbi.1002503.
 
