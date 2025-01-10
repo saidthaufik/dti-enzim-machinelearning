@@ -287,10 +287,11 @@ Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal ten
             plt.show()
           ```
 
-          <div align="center">
-              <img src="![image](https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20)" alt="Nilai Kesamaan Antar Senyawa"/>  
-              **Gambar 1 - Nilai Kesamaan Antar Senyawa**
-          </div>
+            <div style="text-align: center;">
+                <img src="https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20" alt="Nilai Kesamaan Antar Senyawa" width="500">
+                <p><b>Gambar 1 - Nilai Kesamaan Antar Senyawa</b></p>
+            </div>
+
           
           
 
