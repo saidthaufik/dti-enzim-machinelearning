@@ -274,7 +274,8 @@ Data ini dapat diakses secara terbuka pada link berikut:
         
         Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
 
-    - Data Visualization
+    - **Data Visualization**
+      
     Setelah dilakukan proses Exploratory Data Analysis (EDA), teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan. Visualisasi membantu menggambarkan hubungan antar fitur, dan distribusi nilai, dengan cara yang lebih intuitif.
 
         - Distribusi Nilai Kesamaan Senyawa pada Compound Data
