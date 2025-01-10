@@ -61,6 +61,7 @@ Data ini dapat diakses secara terbuka pada link berikut:
 [Yamanishi Dataset](http://web.kuicr.kyoto-u.ac.jp/supp/yoshi/drugtarget/)  
 
 - **Exploratory Data Analysis (EDA)**
+
   Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal tentang data yang akan dianalisis, sehingga mempermudah dalam menentukan langkah-langkah selanjutnya, seperti pembersihan data, transformasi, atau pengembangan model. Dengan analisis statistik, EDA membantu memahami struktur data secara lebih mendalam dan memastikan data siap untuk proses analisis lebih lanjut
 
     - Dataset Interaction Data (`bind_orfhsa_drug_e.txt`)
