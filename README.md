@@ -26,24 +26,28 @@ Pendekatan berbasis komputasi seperti model klasifikasi _Drug-Target Interaction
 3. Untuk mendapatkan model yang terbaik, digunakan empat algoritma _machine learning_ sebagai model _baseline_ diantaranya Random Forest, KNN, SAE-DNN dan AdaBoost, kemudian mengevaluasi performa model _baseline_ tersebut menggunakan metrik evaluasi akurasi. Model yang terbaik dari _baseline_ dari segi akurasi akan dilakukan _hyperparameter tuning_ dengan teknik _grid search_ untuk mendapatkan _hyperparameter_ yang optimal sebelum digunakan dalam pengujian akhir. Adapun metrik yang digunakan untuk proses pengujian akhir tersebut adalah akurasi, _precision_, _recall_, dan F1-score
 
 # Data Understanding
+# **Data Understanding**  
 Dataset ini dikenal sebagai **Yamanishi 2008** yang berisi informasi tentang interaksi biomolekuler antara enzim (protein) dan senyawa kimia. Dataset ini diperkenalkan oleh **Yamanishi et al. (2008)** dalam studi tentang prediksi interaksi _protein-ligand_ menggunakan integrasi data kimia dan genomik.  
 
-Fokus penelitian ini adalah __menganalisis hubungan spesifik antara enzim dengan senyawa__ melalui data fitur numerik yang relevan. Dataset ini mendukung pengembangan model _machine learning_, khususnya untuk masalah _binary classification_, di mana __variabel target menunjukkan apakah suatu interaksi terjadi atau tidak__ antara obat (_drug_) dengan proteinnya.  
+Fokus penelitian ini adalah __menganalisis hubungan spesifik antara enzim dengan senyawa__ melalui data fitur numerik yang relevan. Namun, dataset-dataset ini masih bersifat mentah atau belum mendukung pengembangan model _machine learning_ sehingga perlu di lakukan analisa lebih lanjut pada proses ini.
 
+
+**Sumber Data**  
 Dataset ini menggabungkan tiga sumber data utama:  
 
 - **Interaction Data** (`bind_orfhsa_drug_e.txt`)  
     - Data ini menyimpan pasangan interaksi positif antara enzim dan senyawa.  
     - Fitur pada dataset ini:  
-        - **Protein_ID**: ID enzim yang diidentifikasi dengan prefix _hsa:_.  
-        - **Compound_ID**: ID senyawa yang berinteraksi dengan enzim.   
+        - **`Protein_ID`**: ID enzim yang diidentifikasi dengan prefix _hsa:_.  
+        - **`Compound_ID`**: ID senyawa yang berinteraksi dengan enzim.   
 
 - **Compound Features Data** (`e_simmat_dc.txt`)  
     - Menggambarkan karakteristik kimiawi dari setiap senyawa.  
     - Fitur pada dataset ini:  
-        - Dimodelkan sebagai __matriks kesamaan__ (_similarity matrix_) dari **Compound_ID**.  
+        - Dimodelkan sebagai __matriks kesamaan__ (_similarity matrix_) dari **Compound_ID**.
         - Menunjukkan hubungan antar senyawa berdasarkan kesamaan struktural dan kimiawi.  
         - Terdiri dari __445 fitur__ yang diekstrak dari _generate_ fitur SIMCOMP (_Simultaneous Comparisons for Multiple Endpoints_) _score_
+        - contoh dari fitur data: `D00002`, `D00005`, `D00007` dan seterusnya
 
 - **Protein Features Data** (`e_simmat_dg.txt`)  
     - Menggambarkan karakteristik biologis dari setiap enzim.  
@@ -51,12 +55,42 @@ Dataset ini menggabungkan tiga sumber data utama:
         - Dimodelkan sebagai __matriks kesamaan__ dari **Protein_ID**.  
         - Merepresentasikan kemiripan antar enzim berdasarkan struktur dan fungsi.  
         - Terdiri dari __664 fitur__ yang dihasilkan dari analisis genomik dan struktur protein yang diekstrak dari _generate_ proses fitur SmithWaterman _score_.  
+        - contoh dari fitur data: `hsa10`, `hsa100`, `hsa10056` dan seterusnya
 
 **Akses Data**  
 Data ini dapat diakses secara terbuka pada link berikut:  
 [Yamanishi Dataset](http://web.kuicr.kyoto-u.ac.jp/supp/yoshi/drugtarget/)  
 
-Kemudian agar lebih representatif, dilakukan **Data Preparation** untuk menggabungkan data tersebut agar siap untuk dilakukan analisis
+- **Exploratory Data Analysis (EDA)**
+Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal tentang data yang akan dianalisis, sehingga mempermudah dalam menentukan langkah-langkah selanjutnya, seperti pembersihan data, transformasi, atau pengembangan model. Dengan analisis statistik, EDA membantu memahami struktur data secara lebih mendalam dan memastikan data siap untuk proses analisis lebih lanjut
+
+    - Dataset Interaction Data (`bind_orfhsa_drug_e.txt`)
+      # Melihat dimensi data
+      ```python
+      print(binary_data.shape)
+      ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Data Preparation
 **Data Preparation** adalah proses awal untuk mempersiapkan data agar siap digunakan dalam analisis. Dataset ini saat ini masih terbagi menjadi tiga bagian utama, yaitu **Interaction Data**, **Compound Features Data**, dan **Protein Features Data** (dapat dilihat saat proses _import data_). Ketiga bagian tersebut menyimpan informasi yang saling melengkapi, namun belum terintegrasi menjadi satu _dataset_ yang utuh dan siap digunakan.
