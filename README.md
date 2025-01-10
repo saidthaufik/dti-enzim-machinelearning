@@ -486,197 +486,193 @@ Dataset awal hanya memiliki label **positif (1)** yang menunjukkan adanya intera
 
 **Langkah-Langkah:**
 - 1. Kombinasi Semua Pasangan (_Negative Sampling_)
-Proses ini membuat semua kombinasi pasangan antara `Protein_ID` dan `Compound_ID` dengan kode sebagai berikut:
-
-```python
-all_combinations = pd.DataFrame(list(product(protein_features['Protein_ID'].unique(), 
+     Proses ini membuat semua kombinasi pasangan antara `Protein_ID` dan `Compound_ID` dengan kode sebagai berikut:
+     ```python
+     all_combinations = pd.DataFrame(list(product(protein_features['Protein_ID'].unique(), 
                     compound_features['Compound_ID'].unique()
                     )), columns=['Protein_ID', 'Compound_ID'])
-```
+     ```
 
-Dengan _output_ sebagai berikut:
-```python
-all_combinations
-```
+     Dengan _output_ sebagai berikut:
+     ```python
+     all_combinations
+     ```
 
-| Protein_ID | Compound_ID |
-|------------|-------------|
-| 10         | D00002      |
-| 10         | D00005      |
-| 10         | D00007      |
-| 10         | D00014      |
-| 10         | D00018      |
-| ...        | ...         |
-| 9955       | D05341      |
-| 9955       | D05353      |
-| 9955       | D05407      |
-| 9955       | D05458      |
-| 9955       | D06238      |
-
-_295480 rows × 2 columns_
-
-Berhasil membuat **295.480 kemungkinan kombinasi** antara `protein_ID` dan `Compound_ID` 
+    | Protein_ID | Compound_ID |
+    |------------|-------------|
+    | 10         | D00002      |
+    | 10         | D00005      |
+    | 10         | D00007      |
+    | 10         | D00014      |
+    | 10         | D00018      |
+    | ...        | ...         |
+    | 9955       | D05341      |
+    | 9955       | D05353      |
+    | 9955       | D05407      |
+    | 9955       | D05458      |
+    | 9955       | D06238      |
+    
+    _295480 rows × 2 columns_
+    
+    Berhasil membuat **295.480 kemungkinan kombinasi** antara `protein_ID` dan `Compound_ID` 
 
 - 2. Filter Pasangan Negatif
-Proses ini **menghapus pasangan yang sudah ada** di data positif (`positive_pairs`) dengan cara merger berdasarkan `all_combinations` dan `positive_pairs`untuk membentuk data negatif (`negative_samples`) dengan kode sebagai berikut:
+     Proses ini **menghapus pasangan yang sudah ada** di data positif (`positive_pairs`) dengan cara merger berdasarkan `all_combinations` dan `positive_pairs`untuk membentuk data negatif (`negative_samples`) dengan kode sebagai berikut:
+     ```python
+        positive_pairs = binary_data[['Protein_ID', 'Compound_ID']]
+        negative_samples = pd.merge(all_combinations, positive_pairs, how='left', indicator=True)
+        negative_samples = negative_samples[negative_samples['_merge'] == 'left_only'][['Protein_ID', 'Compound_ID']]
+        negative_samples['Label'] = 0  # Label negatif
+     ```
 
-```python
-positive_pairs = binary_data[['Protein_ID', 'Compound_ID']]
-negative_samples = pd.merge(all_combinations, positive_pairs, how='left', indicator=True)
-negative_samples = negative_samples[negative_samples['_merge'] == 'left_only'][['Protein_ID', 'Compound_ID']]
-negative_samples['Label'] = 0  # Label negatif
-```
+     Dengan _output_ sebagai berikut:
+     ```python
+     negative_samples
+     ```
 
-Dengan _output_ sebagai berikut:
-```python
-negative_samples
-```
+     Berhasil menghapus pasangan yang sudah ada di data positif sehingga menyisakan **292.554 kemungkinan kombinasi** hasil filter (berkurang 2.926 pasangan) untuk memastikan data tidak redundan
 
-Berhasil menghapus pasangan yang sudah ada di data positif sehingga menyisakan **292.554 kemungkinan kombinasi** hasil filter (berkurang 2.926 pasangan) untuk memastikan data tidak redundan
+- 3. Gabungkan Fitur Protein dan Compound untuk Data Negatif
+     Proses ini menggabungkan fitur protein dan _compound_ (senyawa) berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Negatif** dengan kode sebagai berikut:
 
-#### 3. Gabungkan Fitur Protein dan Compound untuk Data Negatif
-Proses ini menggabungkan fitur protein dan _compound_ (senyawa) berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Negatif** dengan kode sebagai berikut:
-
-```python
-negative_samples = (negative_samples
+     ```python
+     negative_samples = (negative_samples
                     .merge(protein_features, on='Protein_ID', how='left')
                     .merge(compound_features, on='Compound_ID', how='left'))
-```
+     ```
 
-Dengan _output_ sebagai berikut:
-```python
-negative_samples
-```
+    Dengan _output_ sebagai berikut:
+    ```python
+    negative_samples
+    ```
 
-| Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
-|------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
-| 10         | D00005      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.059701| 0.215385| 0.203390| 0.122807| 0.212121|
-| 10         | D00007      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.217391| 0.058824| 0.120000| 0.105263| 0.057143|
-| 10         | D00014      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.225806| 0.045455| 0.151515| 0.068966| 0.068182|
-| 10         | D00018      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.034483| 0.027027| 0.153846| 0.045455| 0.026316|
-| 10         | D00021      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
-| ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
-| 9955       | D05341      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 1.000000| 0.047619| 0.125000| 0.074074| 0.046512|
-| 9955       | D05353      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
-| 9955       | D05407      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.125000| 0.222222| 1.000000| 0.115385| 0.216216|
-| 9955       | D05458      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.074074| 0.233333| 0.115385| 1.000000| 0.266667|
-| 9955       | D06238      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.046512| 0.394737| 0.216216| 0.266667| 1.000000|
-
-_292554 rows × 1112 columns_
-
-Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Negatif**
+    | Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
+    |------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
+    | 10         | D00005      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.059701| 0.215385| 0.203390| 0.122807| 0.212121|
+    | 10         | D00007      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.217391| 0.058824| 0.120000| 0.105263| 0.057143|
+    | 10         | D00014      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.225806| 0.045455| 0.151515| 0.068966| 0.068182|
+    | 10         | D00018      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.034483| 0.027027| 0.153846| 0.045455| 0.026316|
+    | 10         | D00021      | 0     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
+    | ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
+    | 9955       | D05341      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 1.000000| 0.047619| 0.125000| 0.074074| 0.046512|
+    | 9955       | D05353      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
+    | 9955       | D05407      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.125000| 0.222222| 1.000000| 0.115385| 0.216216|
+    | 9955       | D05458      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.074074| 0.233333| 0.115385| 1.000000| 0.266667|
+    | 9955       | D06238      | 0     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.046512| 0.394737| 0.216216| 0.266667| 1.000000|
+    
+    _292554 rows × 1112 columns_
+    
+    Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Negatif**
 
 - 4. Gabungkan Fitur Protein dan Compound untuk Data Positif
-Proses ini menggabungkan fitur protein dan _compound_ (senyawa) berdasarkan `Protein_ID` dan `Compound_ID`pada **Data Positif** dengan kode sebagai berikut:
+     Proses ini menggabungkan fitur protein dan _compound_ (senyawa) berdasarkan `Protein_ID` dan `Compound_ID`pada **Data Positif** dengan kode sebagai berikut:
 
-```python
-positive_samples = binary_data[binary_data['Label'] == 1]
-positive_samples = positive_samples.merge(protein_features, on='Protein_ID', how='left') \
+     ```python
+     positive_samples = binary_data[binary_data['Label'] == 1]
+     positive_samples = positive_samples.merge(protein_features, on='Protein_ID', how='left') \
                                    .merge(compound_features, on='Compound_ID', how='left') \
                                    .drop(columns=positive_samples.filter(regex='_x|_y').columns)
-```
+     ```
 
-Dengan _output_ sebagai berikut:
-```python
-positive_samples
-```
+    Dengan _output_ sebagai berikut:
+    ```python
+    positive_samples
+    ```
 
-| Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
-|------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
-| 10         | D00002      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.033333| 0.166667| 0.215686| 0.122449| 0.203390|
-| 10         | D00448      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.069767| 0.317073| 0.150000| 0.147059| 0.250000|
-| 100        | D00037      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
-| 100        | D00155      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.027778| 0.097561| 0.275862| 0.071429| 0.095238|
-| 10056      | D00021      | 1     | 0.021575| 0.018325| 1.000000 | 0.016285| 0.020771| 0.008854 | 0.017779| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
-| ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
-| 9647       | D00107      | 1     | 0.023501| 0.017710| 0.013789 | 0.022033| 0.018170| 0.013726 | 0.019645| ...   | 0.027027| 0.076923| 0.055556| 0.045455| 0.103896|
-| 9647       | D00184      | 1     | 0.023501| 0.017710| 0.013789 | 0.022033| 0.018170| 0.013726 | 0.019645| ...   | 0.072917| 0.037383| 0.051020| 0.032258| 0.046729|
-| 983        | D02880      | 1     | 0.023542| 0.025189| 0.017116 | 0.671069| 0.661582| 0.069185 | 0.391654| ...   | 0.021739| 0.309524| 0.205128| 0.176471| 0.272727|
-| 9945       | D00332      | 1     | 0.020124| 0.017704| 0.016019 | 0.016540| 0.015700| 0.010667 | 0.015589| ...   | 0.200000| 0.027027| 0.071429| 0.095238| 0.054054|
-| 9955       | D00037      | 1     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
-
-_2926 rows × 1112 columns_
-
-Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Positif**
+    | Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
+    |------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
+    | 10         | D00002      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.033333| 0.166667| 0.215686| 0.122449| 0.203390|
+    | 10         | D00448      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.069767| 0.317073| 0.150000| 0.147059| 0.250000|
+    | 100        | D00037      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
+    | 100        | D00155      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.027778| 0.097561| 0.275862| 0.071429| 0.095238|
+    | 10056      | D00021      | 1     | 0.021575| 0.018325| 1.000000 | 0.016285| 0.020771| 0.008854 | 0.017779| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
+    | ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
+    | 9647       | D00107      | 1     | 0.023501| 0.017710| 0.013789 | 0.022033| 0.018170| 0.013726 | 0.019645| ...   | 0.027027| 0.076923| 0.055556| 0.045455| 0.103896|
+    | 9647       | D00184      | 1     | 0.023501| 0.017710| 0.013789 | 0.022033| 0.018170| 0.013726 | 0.019645| ...   | 0.072917| 0.037383| 0.051020| 0.032258| 0.046729|
+    | 983        | D02880      | 1     | 0.023542| 0.025189| 0.017116 | 0.671069| 0.661582| 0.069185 | 0.391654| ...   | 0.021739| 0.309524| 0.205128| 0.176471| 0.272727|
+    | 9945       | D00332      | 1     | 0.020124| 0.017704| 0.016019 | 0.016540| 0.015700| 0.010667 | 0.015589| ...   | 0.200000| 0.027027| 0.071429| 0.095238| 0.054054|
+    | 9955       | D00037      | 1     | 0.020689| 0.023529| 0.016563 | 0.023461| 0.023216| 0.018046 | 0.022633| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
+    
+    _2926 rows × 1112 columns_
+    
+    Berhasil menggabungkan fitur protein dan senyawa berdasarkan `Protein_ID` dan `Compound_ID` pada **Data Positif**
 
 - 5. Atur Rasio Negatif
-Proses ini mengatur jumlah data negatif sesuai dengan rasio yang diinginkan, dalam hal ini menggunakan **Rasio 1:2** 
+     Proses ini mengatur jumlah data negatif sesuai dengan rasio yang diinginkan, dalam hal ini menggunakan **Rasio 1:2**
 
-Beberapa penelitian dibidang Bioinformatika menggunakan Rasio tersebut sebagai **Rasio yang cukup optimal** untuk digunakan, Namun tetap mempertimbangkan komputasi.
+     Beberapa penelitian dibidang Bioinformatika menggunakan Rasio tersebut sebagai **Rasio yang cukup optimal** untuk digunakan, Namun tetap mempertimbangkan komputasi.
 
-```python
-ratio = 2 
-num_positive = len(positive_samples)
-negative_samples = negative_samples.sample(n=min(len(negative_samples), ratio * num_positive), random_state=42)
-```
+    ```python
+    ratio = 2 
+    num_positive = len(positive_samples)
+    negative_samples = negative_samples.sample(n=min(len(negative_samples), ratio * num_positive), random_state=42)
+    ```
 
-Dengan _output_ sebagai berikut:
-```python
-num_positive
-```
-
-```
-2926
-```
-
-```python
-negative_samples
-```
-
-| Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
-|------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
-| 246        | D01196      | 0     | 0.015133| 0.018658| 0.015794 | 0.018637| 0.020419| 0.010687 | 0.015696| ...   | 0.032258| 0.176471| 0.103448| 0.086957| 0.138889|
-| 501        | D03741      | 0     | 0.015535| 0.016335| 0.012713 | 0.018064| 0.019778| 0.012342 | 0.020771| ...   | 0.089744| 0.162500| 0.118421| 0.130435| 0.160494|
-| 27032      | D00733      | 0     | 0.019438| 0.013648| 0.015960 | 0.013910| 0.017572| 0.008448 | 0.013958| ...   | 0.228571| 0.275000| 0.303030| 0.241379| 0.333333|
-| 5646       | D03829      | 0     | 0.023600| 0.031924| 0.019527 | 0.019553| 0.022037| 0.013012 | 0.019213| ...   | 0.157895| 0.083333| 0.128205| 0.121212| 0.104167|
-| 1734       | D00584      | 0     | 0.020309| 0.025827| 0.018255 | 0.021685| 0.024077| 0.016176 | 0.029104| ...   | 0.000000| 0.166667| 0.227273| 0.111111| 0.125000|
-| ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
-| 7366       | D00947      | 0     | 0.019303| 0.014565| 0.012659 | 0.019852| 0.018534| 0.012028 | 0.020611| ...   | 0.050000| 0.190476| 0.105263| 0.166667| 0.159091|
-| 762        | D01665      | 0     | 0.027194| 0.022123| 0.015481 | 0.029848| 0.024695| 0.017209 | 0.018751| ...   | 0.090909| 0.047619| 0.200000| 0.035714| 0.022727|
-| 109        | D03775      | 0     | 0.012289| 0.013337| 0.010605 | 0.013455| 0.012291| 0.008441 | 0.012204| ...   | 0.146341| 0.145833| 0.093023| 0.250000| 0.120000|
-| 1803       | D05353      | 0     | 0.018208| 0.015733| 0.012957 | 0.014913| 0.017832| 0.011560 | 0.019232| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
-| 1025       | D00032      | 0     | 0.021351| 0.020733| 0.016487 | 0.322345| 0.326554| 0.045143 | 0.263284| ...   | 0.160000| 0.121212| 0.160000| 0.294118| 0.151515|
-
-_5852 rows × 1112 columns_
-
-Berhasil mendapatkan data dengan rasio 1:2 sebanyak :
-- data dengan **kelas positif** (`1`) sebanyak **2926 pasangan interaksi**
-- data dengan **kelas negatif** (`2`) sebanyak **5852 pasangan interaksi**
+    Dengan _output_ sebagai berikut:
+    ```python
+    num_positive
+    ```
+    
+    ```
+    2926
+    ```
+    
+    ```python
+    negative_samples
+    ```
+    
+    | Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
+    |------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
+    | 246        | D01196      | 0     | 0.015133| 0.018658| 0.015794 | 0.018637| 0.020419| 0.010687 | 0.015696| ...   | 0.032258| 0.176471| 0.103448| 0.086957| 0.138889|
+    | 501        | D03741      | 0     | 0.015535| 0.016335| 0.012713 | 0.018064| 0.019778| 0.012342 | 0.020771| ...   | 0.089744| 0.162500| 0.118421| 0.130435| 0.160494|
+    | 27032      | D00733      | 0     | 0.019438| 0.013648| 0.015960 | 0.013910| 0.017572| 0.008448 | 0.013958| ...   | 0.228571| 0.275000| 0.303030| 0.241379| 0.333333|
+    | 5646       | D03829      | 0     | 0.023600| 0.031924| 0.019527 | 0.019553| 0.022037| 0.013012 | 0.019213| ...   | 0.157895| 0.083333| 0.128205| 0.121212| 0.104167|
+    | 1734       | D00584      | 0     | 0.020309| 0.025827| 0.018255 | 0.021685| 0.024077| 0.016176 | 0.029104| ...   | 0.000000| 0.166667| 0.227273| 0.111111| 0.125000|
+    | ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
+    | 7366       | D00947      | 0     | 0.019303| 0.014565| 0.012659 | 0.019852| 0.018534| 0.012028 | 0.020611| ...   | 0.050000| 0.190476| 0.105263| 0.166667| 0.159091|
+    | 762        | D01665      | 0     | 0.027194| 0.022123| 0.015481 | 0.029848| 0.024695| 0.017209 | 0.018751| ...   | 0.090909| 0.047619| 0.200000| 0.035714| 0.022727|
+    | 109        | D03775      | 0     | 0.012289| 0.013337| 0.010605 | 0.013455| 0.012291| 0.008441 | 0.012204| ...   | 0.146341| 0.145833| 0.093023| 0.250000| 0.120000|
+    | 1803       | D05353      | 0     | 0.018208| 0.015733| 0.012957 | 0.014913| 0.017832| 0.011560 | 0.019232| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
+    | 1025       | D00032      | 0     | 0.021351| 0.020733| 0.016487 | 0.322345| 0.326554| 0.045143 | 0.263284| ...   | 0.160000| 0.121212| 0.160000| 0.294118| 0.151515|
+    
+    _5852 rows × 1112 columns_
+    
+    Berhasil mendapatkan data dengan rasio 1:2 sebanyak :
+    - data dengan **kelas positif** (`1`) sebanyak **2926 pasangan interaksi**
+    - data dengan **kelas negatif** (`2`) sebanyak **5852 pasangan interaksi**
 
 - 6. Gabungkan Data Positif dan Negatif
-Proses ini menggabungkan semua **Data Positif** dan **Data Negatif** ke dalam satu _dataframe_ dengan kode sebagai berikut:
+     Proses ini menggabungkan semua **Data Positif** dan **Data Negatif** ke dalam satu _dataframe_ dengan kode sebagai berikut:
 
-```python
-final_combined_data = pd.concat([positive_samples, negative_samples], axis=0).fillna(0)
-```
+     ```python
+     final_combined_data = pd.concat([positive_samples, negative_samples], axis=0).fillna(0)
+     ```
 
-Dengan _output_ sebagai berikut:
-```python
-final_combined_data
-```
+    Dengan _output_ sebagai berikut:
+    ```python
+    final_combined_data
+    ```
 
-| Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
-|------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
-| 10         | D00002      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.033333| 0.166667| 0.215686| 0.122449| 0.203390|
-| 10         | D00448      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.069767| 0.317073| 0.150000| 0.147059| 0.250000|
-| 100        | D00037      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
-| 100        | D00155      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.027778| 0.097561| 0.275862| 0.071429| 0.095238|
-| 10056      | D00021      | 1     | 0.021575| 0.018325| 1.000000 | 0.016285| 0.020771| 0.008854 | 0.017779| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
-| ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
-| 7366       | D00947      | 0     | 0.019303| 0.014565| 0.012659 | 0.019852| 0.018534| 0.012028 | 0.020611| ...   | 0.050000| 0.190476| 0.105263| 0.166667| 0.159091|
-| 762        | D01665      | 0     | 0.027194| 0.022123| 0.015481 | 0.029848| 0.024695| 0.017209 | 0.018751| ...   | 0.090909| 0.047619| 0.200000| 0.035714| 0.022727|
-| 109        | D03775      | 0     | 0.012289| 0.013337| 0.010605 | 0.013455| 0.012291| 0.008441 | 0.012204| ...   | 0.146341| 0.145833| 0.093023| 0.250000| 0.120000|
-| 1803       | D05353      | 0     | 0.018208| 0.015733| 0.012957 | 0.014913| 0.017832| 0.011560 | 0.019232| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
-| 1025       | D00032      | 0     | 0.021351| 0.020733| 0.016487 | 0.322345| 0.326554| 0.045143 | 0.263284| ...   | 0.160000| 0.121212| 0.160000| 0.294118| 0.151515|
-
-_8778 rows × 1112 columns_
-
-Berhasil menggabungkan data dengan label **Positif (`1`)** dan **Data Negatif(`0`)** ke dalam satu _dataframe_
-Sehingga total data adalah:
-- 8778 data pasangan interaksi senyawa dan protein
-- 1112 kolom fitur (termasuk `Protein_ID`,`Compound_`, `Label`, serta fitur senyawa dan protein yang digabungkan)
-
-Setelah dilakukan **Proses Pembangkitan Data Negatif** maka dilanjutkan Proses **Exploratory Data Analysis** 
+    | Protein_ID | Compound_ID | Label | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  |
+    |------------|-------------|-------|---------|---------|----------|---------|---------|----------|---------|-------|---------|---------|---------|---------|---------|
+    | 10         | D00002      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.033333| 0.166667| 0.215686| 0.122449| 0.203390|
+    | 10         | D00448      | 1     | 1.000000| 0.025752| 0.021575 | 0.019325| 0.026672| 0.015293 | 0.023486| ...   | 0.069767| 0.317073| 0.150000| 0.147059| 0.250000|
+    | 100        | D00037      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.192308| 0.026316| 0.107143| 0.090909| 0.025641|
+    | 100        | D00155      | 1     | 0.025752| 1.000000| 0.018325 | 0.025940| 0.027021| 0.018789 | 0.020570| ...   | 0.027778| 0.097561| 0.275862| 0.071429| 0.095238|
+    | 10056      | D00021      | 1     | 0.021575| 0.018325| 1.000000 | 0.016285| 0.020771| 0.008854 | 0.017779| ...   | 0.153846| 0.151515| 0.111111| 0.533333| 0.181818|
+    | ...        | ...         | ...   | ...     | ...     | ...      | ...     | ...     | ...      | ...     | ...   | ...     | ...     | ...     | ...     | ...     |
+    | 7366       | D00947      | 0     | 0.019303| 0.014565| 0.012659 | 0.019852| 0.018534| 0.012028 | 0.020611| ...   | 0.050000| 0.190476| 0.105263| 0.166667| 0.159091|
+    | 762        | D01665      | 0     | 0.027194| 0.022123| 0.015481 | 0.029848| 0.024695| 0.017209 | 0.018751| ...   | 0.090909| 0.047619| 0.200000| 0.035714| 0.022727|
+    | 109        | D03775      | 0     | 0.012289| 0.013337| 0.010605 | 0.013455| 0.012291| 0.008441 | 0.012204| ...   | 0.146341| 0.145833| 0.093023| 0.250000| 0.120000|
+    | 1803       | D05353      | 0     | 0.018208| 0.015733| 0.012957 | 0.014913| 0.017832| 0.011560 | 0.019232| ...   | 0.047619| 1.000000| 0.222222| 0.233333| 0.394737|
+    | 1025       | D00032      | 0     | 0.021351| 0.020733| 0.016487 | 0.322345| 0.326554| 0.045143 | 0.263284| ...   | 0.160000| 0.121212| 0.160000| 0.294118| 0.151515|
+    
+    _8778 rows × 1112 columns_
+    
+    Berhasil menggabungkan data dengan label **Positif (`1`)** dan **Data Negatif(`0`)** ke dalam satu _dataframe_
+    Sehingga total data adalah:
+    - 8778 data pasangan interaksi senyawa dan protein
+    - 1112 kolom fitur (termasuk `Protein_ID`,`Compound_`, `Label`, serta fitur senyawa dan protein yang digabungkan)
 
 ## Mengatasi Imbalance Data
 Proses ini dirancang untuk menangani **ketidakseimbangan data (_imbalance data_)** yang terjadi akibat penggunaan rasio **1:2** pada pembangkitan label negatif. Ketidakseimbangan ini dapat memengaruhi performa model, karena model cenderung lebih akurat dalam mengenali kelas mayoritas (negatif) dan mengabaikan kelas minoritas (positif). Oleh karena itu, diperlukan strategi khusus untuk menyeimbangkan jumlah data pada kedua kelas.
@@ -708,49 +704,44 @@ Metode yang digunakan dalam penanganan **_imbalance data_** ini adalah **_over-s
 **Langkah-langkahnya:**
 
 - 1. Pisahkan Fitur (x) dan Label (y)
-Proses ini menghapus kolom non-numerik (`Protein_ID` dan `Compound_ID`) 
-
-```python
-X = final_data.drop(['Label', 'Protein_ID', 'Compound_ID'], axis=1)  
-y = final_data['Label']  
-```
-
+     Proses ini menghapus kolom non-numerik (`Protein_ID` dan `Compound_ID`)
+     ```python
+     X = final_data.drop(['Label', 'Protein_ID', 'Compound_ID'], axis=1)
+     y = final_data['Label']
+     ```
+     
 - 2. Terapkan SMOTE untuk _oversampling_ Data Positif
-
-```python
-smote = SMOTE(random_state=42)
-X_res, y_res = smote.fit_resample(X, y)  
-```
+     ```python
+     smote = SMOTE(random_state=42)
+     X_res, y_res = smote.fit_resample(X, y)
+     ```
 
 - 3. Cek Distribusi Label Sebelum dan Sesudah SMOTE
+     ```python
+     print('Distribusi label sebelum SMOTE:', Counter(y))
+     print('Distribusi label setelah SMOTE:', Counter(y_res))
+     ```
 
-```python
-print('Distribusi label sebelum SMOTE:', Counter(y))
-print('Distribusi label setelah SMOTE:', Counter(y_res))
-```
+     Dengan _output_ sebagai berikut:
 
-Dengan _output_ sebagai berikut:
+     ```
+     print('Distribusi label sebelum SMOTE:', Counter(y))
+     print('Distribusi label setelah SMOTE:', Counter(y_res))
+     ```
 
-```
-print('Distribusi label sebelum SMOTE:', Counter(y))
-print('Distribusi label setelah SMOTE:', Counter(y_res))
-```
-
-Setelah dilakukan proses SMOTE distribusi data menjadi _balance_ yakni:
-   - `0` sebanyak **5.852 data** 
-   - `1` sebanyak **5.852 data**
+     Setelah dilakukan proses SMOTE distribusi data menjadi _balance_ yakni:
+     - `0` sebanyak **5.852 data**
+     - - `1` sebanyak **5.852 data**
 
 - 4. Membuat Data Baru Hasil SMOTE
+     ```python
+     final_data = pd.concat([pd.DataFrame(X_res), pd.Series(y_res, name='Label')], axis=1)
+     ```
 
-```python
-final_data = pd.concat([pd.DataFrame(X_res), pd.Series(y_res, name='Label')], axis=1)
-```
-
-Dengan _output_ sebagai berikut:
-
-```
-final_data
-```
+     Dengan _output_ sebagai berikut:
+     ```
+     final_data
+     ```
 
 | hsa10   | hsa100  | hsa10056 | hsa1017 | hsa1018 | hsa10188 | hsa1019 | hsa1020 | hsa1021 | hsa1022 | ...   | D05341  | D05353  | D05407  | D05458  | D06238  | Label |
 |---------|---------|----------|---------|---------|----------|---------|---------|---------|---------|-------|---------|---------|---------|---------|---------|-------|
@@ -785,38 +776,34 @@ Berikut adalah penjelasan setiap data:
 - **_Testing_ Data** : Digunakan untuk **pengujian akhir model** dengan data yang **belum pernah dilihat sebelumnya**. Tujuannya adalah mengukur **kinerja model** secara obyektif setelah model selesai dilatih dan divalidasi. Data ini juga mengukur metrik performa seperti akurasi, presisi, _recall_ atau **F1-score**.
 
 - Mendefenisikan Fitur (x) dan Label (y)
-
-```python
-X = final_data.drop(columns=['label'])
-y = final_data['label']
-```
-
+  ```python
+  X = final_data.drop(columns=['label'])
+  y = final_data['label']
+  ```
+  
 - Membagi data menjadi Training (70%)
-
-```python
-X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
-```
+  ```python
+  X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+  ```
 
 - Membagi Sisa Data menjadi Validation (20%) dan Testing (10%)
-
-```python
-X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.3, random_state=42)
-```
+  ```python
+  X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.3, random_state=42)
+  ```
 
 - Menampilkan Hasil Pembagian Data
+  ```python
+  print(f"Training: {len(X_train)}, Validation: {len(X_val)}, Testing: {len(X_test)}")
+  ```
 
-```python
-print(f"Training: {len(X_train)}, Validation: {len(X_val)}, Testing: {len(X_test)}")
-```
+  Dengan _output_ sebagai berikut:
 
-Dengan _output_ sebagai berikut:
+  ```
+  Training: 8192, Validation: 2458, Testing: 1054
+  ```
 
-```
-Training: 8192, Validation: 2458, Testing: 1054
-```
-
-Berdasarkan _output_ diatas :
-- Komposisi 70%
+  Berdasarkan _output_ diatas :
+  - Komposisi 70%
     - Data _Training_ sebanyak **8.192 data** 
 - Komposisi 30% (masing-masing 50%)
     - Data _Validation_ sebanyak **2.458 data**
@@ -828,52 +815,48 @@ Berdasarkan _output_ diatas :
 Tujuannya adalah untuk **meningkatkan performa model** dengan menghilangkan skala yang tidak konsisten, distribusi yang tidak normal, atau _outlier_ yang ekstrem.
 
 - Penerapan Power Transformer
+  Berdasarkan analisis pada **Data Visualization** ditemukan bahwa persebaran data pada `compound_data` dan `protein_data`**sangat miring ke kanan (_positively skewed_)** Sehingga dilakukan Transformasi Data
+  Pada proses ini dilakukan Transformasi Data dengan menggunakan **PowerTransformer (Yeo-Johnson)** yang bertujuan untuk **menormalkan distribusi**, sehingga fitur menjadi lebih **simetris** dan **stabil**, yang diharapkan dapat meningkatkan performa model.
+  Berikut adalah penerapannya:
 
-Berdasarkan analisis pada **Data Visualization** ditemukan bahwa persebaran data pada `compound_data` dan `protein_data`**sangat miring ke kanan (_positively skewed_)** Sehingga dilakukan Transformasi Data
+  ```python
+  transformer = PowerTransformer(method='yeo-johnson')
+  X_train = transformer.fit_transform(X_train)
+  X_val = transformer.transform(X_val)
+  X_test = transformer.transform(X_test)
+  ```
 
-Pada proses ini dilakukan Transformasi Data dengan menggunakan **PowerTransformer (Yeo-Johnson)** yang bertujuan untuk **menormalkan distribusi**, sehingga fitur menjadi lebih **simetris** dan **stabil**, yang diharapkan dapat meningkatkan performa model.
+  Berhasil menerapkan Transformasi Data **PowerTransformer (Yeo-Johnson)**
 
-Berikut adalah penerapannya:
+  ```python
+  plt.figure(figsize=(15, 5))
+  # Training
+  plt.subplot(1, 3, 1)
+  sns.histplot(X_train[:, 0], bins=50, kde=True, color='green')
+  plt.title('Training - Sesudah Transformasi')
 
-```python
-transformer = PowerTransformer(method='yeo-johnson')  
-X_train = transformer.fit_transform(X_train)
-X_val = transformer.transform(X_val)
-X_test = transformer.transform(X_test)
-```
+  # Validation
+  plt.subplot(1, 3, 2)
+  sns.histplot(X_val[:, 0], bins=50, kde=True, color='green')
+  plt.title('Validation - Sesudah Transformasi')
 
-Berhasil menerapkan Transformasi Data **PowerTransformer (Yeo-Johnson)**
+  # Testing
+  plt.subplot(1, 3, 3)
+  sns.histplot(X_test[:, 0], bins=50, kde=True, color='green')
+  plt.title('Testing - Sesudah Transformasi')
 
-```python
-plt.figure(figsize=(15, 5))
+  plt.tight_layout()
+  plt.show()
+  ```
 
-# Training
-plt.subplot(1, 3, 1)
-sns.histplot(X_train[:, 0], bins=50, kde=True, color='green')
-plt.title('Training - Sesudah Transformasi')
+  Berikut adalah outputnya:
 
-# Validation
-plt.subplot(1, 3, 2)
-sns.histplot(X_val[:, 0], bins=50, kde=True, color='green')
-plt.title('Validation - Sesudah Transformasi')
-
-# Testing
-plt.subplot(1, 3, 3)
-sns.histplot(X_test[:, 0], bins=50, kde=True, color='green')
-plt.title('Testing - Sesudah Transformasi')
-
-plt.tight_layout()
-plt.show()
-```
-
-Berikut adalah outputnya:
-
-<div style="text-align: center;">
-    <img src="https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af" alt="Distribusi Kelas Label" width="500">
-    <p><b>Gambar 3 - Data Distribution (After Transform Data)</b></p>
-</div
-
-Gambar di atas menampilkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** setelah diterapkan **PowerTransformer (Yeo-Johnson)**. Distribusi yang sebelumnya **sangat miring (_skewed_)** kini telah berubah menjadi lebih **simetris** dan mendekati **distribusi normal (Gaussian)**. 
+  <div style="text-align: center;">
+      <img src="https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af" alt="Distribusi Kelas Label" width="500">
+      <p><b>Gambar 3 - Data Distribution (After Transform Data)</b></p>
+  </div
+      
+  Gambar di atas menampilkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** setelah diterapkan **PowerTransformer (Yeo-Johnson)**. Distribusi yang sebelumnya **sangat miring (_skewed_)** kini telah berubah menjadi lebih **simetris** dan mendekati **distribusi normal (Gaussian)**. 
 
 # Model Development 
 
@@ -973,61 +956,67 @@ Proses Evaluasi ini akan mengevaluasi performa masing-masing algoritma dengan me
 ## Evaluasi Algoritma _Baseline_
 
 - Evaluasi Baseline Algoritma Random Forest
-random_forest.fit(X_train, y_train)
-rf_predictions = random_forest.predict(X_test)
-rf_acc = accuracy_score(y_test, rf_predictions)
-print(f'Akurasi Algoritma Random Forest: {rf_acc}')
 
-Outputnya adalah:
+  ``` python
+  random_forest.fit(X_train, y_train)
+  rf_predictions = random_forest.predict(X_test)
+  rf_acc = accuracy_score(y_test, rf_predictions)
+  print(f'Akurasi Algoritma Random Forest: {rf_acc}')
+  ```
 
-```
-Akurasi Algoritma Random Forest: 0.9222011385199241
-```
+  Outputnya adalah:
+  ```
+  Akurasi Algoritma Random Forest: 0.9222011385199241
+  ```
 
-Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `92,20%`
+  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `92,20%`
 
 - Evaluasi Baseline Algoritma KNN
-knn.fit(X_train, y_train)
-knn_predictions = knn.predict(X_test)
-knn_acc = accuracy_score(y_test, knn_predictions)
-print(f'Akurasi Algoritma KNN: {knn_acc}')
+  ``` python
+  knn.fit(X_train, y_train)
+  knn_predictions = knn.predict(X_test)
+  knn_acc = accuracy_score(y_test, knn_predictions)
+  print(f'Akurasi Algoritma KNN: {knn_acc}')
+  ```
 
-Outputnya adalah:
+  Outputnya adalah:
+  ```
+  Akurasi Algoritma KNN: 0.849146110056926
+  ```
 
-```
-Akurasi Algoritma KNN: 0.849146110056926
-```
-
-Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `84,91%`
+  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `84,91%`
 
 - Evaluasi Baseline Algoritma SAE-DNN
-model = build_sae_dnn(input_shape=X_train.shape[1])
-model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
-preds = (model.predict(X_test) > 0.5).astype(int)
-saednn_acc = accuracy_score(y_test, preds)
-print(f'Akurasi Algoritma SAE-DNN: {saednn_acc}')
 
-Outputnya adalah:
+  ``` python
+  model = build_sae_dnn(input_shape=X_train.shape[1])
+  model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
+  preds = (model.predict(X_test) > 0.5).astype(int)
+  saednn_acc = accuracy_score(y_test, preds)
+  print(f'Akurasi Algoritma SAE-DNN: {saednn_acc}')
+  ```
 
-```
-Akurasi Algoritma SAE-DNN: 0.9013282732447818
-```
-
-Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `90,13%`
+  Outputnya adalah:
+  ```
+  Akurasi Algoritma SAE-DNN: 0.9013282732447818
+  ```
+  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `90,13%`
 
 - Evaluasi Baseline Algoritma AdaBoost
-ada_model.fit(X_train, y_train)
-preds = ada_model.predict(X_test)
-adab_acc = accuracy_score(y_test, preds)
-print(f'Akurasi Algoritma AdaBoost: {adab_acc}')
 
-Outputnya adalah:
+  ``` python
+  ada_model.fit(X_train, y_train)
+  preds = ada_model.predict(X_test)
+  adab_acc = accuracy_score(y_test, preds)
+  print(f'Akurasi Algoritma AdaBoost: {adab_acc}')
+  ```
 
-```
-Akurasi Algoritma AdaBoost: 0.8197343453510436
-```
+  Outputnya adalah:
+  ```
+  Akurasi Algoritma AdaBoost: 0.8197343453510436
+  ```
 
-Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `81,97%`
+  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `81,97%`
 
 ## Perbandingan Hasil Algoritma Baseline
 
@@ -1099,14 +1088,10 @@ Dengan akurasi terhadap data _validation_ adalah sebesar **94,26%**
 Setelah proses pelatihan dan tuning selesai, evaluasi model dilakukan dengan menggunakan **_Confusion Matrix_**. _Confusion Matrix_ memberikan gambaran performa model dengan menunjukkan jumlah prediksi yang benar dan salah untuk setiap kelas. 
 
 <div align="center">
-
 <img src="https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc" alt="Confusion Matrix" width="500"/>  
-
 <br> 
-
 **Gambar 4 - Confusion Matrix**  
 (Sumber: Rahul Sankar, 2023 [[11](https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac)])
-
 </div>
 
 **Metrik yang dievaluasi** dari _Confusion Matrix_ meliputi:
@@ -1127,11 +1112,8 @@ plt.show()
 ```
 
 <div align="center">
-
 <img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result"/>  
-
 **Gambar 5 - Confusion Matrix Result**
-
 </div>
 
 Berdasarkan grafik diatas berikut adalah Hasil _Confusion Matrix_ dari Permodelan Data _Testing_ yang totalnya berjumlah **1.054 Data**:
