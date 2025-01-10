@@ -1021,8 +1021,8 @@ Proses Evaluasi ini akan mengevaluasi performa masing-masing algoritma dengan me
 ## Perbandingan Hasil Algoritma Baseline
 
 <div align="center">
-![image](https://github.com/user-attachments/assets/9ec07b8e-701d-4688-b6ce-090fe0ec5d2b)
-**Gambar 4 - Comparison Baseline Algorithm**
+  <img src="https://github.com/user-attachments/assets/9ec07b8e-701d-4688-b6ce-090fe0ec5d2b" alt="Comparison Baseline Algorithm" width="500">
+  <p><b>Gambar 4 - Comparison Baseline Algorithm</b></p>
 </div>
 
 Berdasarkan hasil perbandingan percobaan data _testing_ diatas dihasilkan:
