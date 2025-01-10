@@ -286,11 +286,36 @@ Setelah melakukan _import_ Data, EDA bertujuan untuk memberikan wawasan awal ten
             plt.ylabel("Frekuensi")
             plt.show()
           ```
+          
+          <div style="text-align: center;">
+              <img src="https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20" alt="Nilai Kesamaan Antar Senyawa" width="500">
+              <p><b>Gambar 1a - Nilai Kesamaan Antar Senyawa</b></p>
+          </div>
 
-<div style="text-align: center;">
-<img src="https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20" alt="Nilai Kesamaan Antar Senyawa" width="500">
-<p><b>Gambar 1 - Nilai Kesamaan Antar Senyawa</b></p>
-</div>
+          Berdasarkan _output_ diatas, distribusi data `compound_data_ **sangat miring ke kanan (_positively skewed_)**. Distribusi seperti ini dapat menyebabkan masalah pada algoritma _machine learning_ yang mengasumsikan **distribusi normal (Gaussian)**, serta membuat model rentan terhadap **bias** akibat _outlier_. Sehingga penangannya adalah Transformasi Data yang akan dilakukan pada **Data Preparation**
+
+          - Distribusi Nilai Kesamaan Protein pada Pada Data
+          ```python
+            flattened_values = protein_data.values.flatten()
+            plt.figure(figsize=(10, 6))
+            plt.hist(flattened_values, bins=30, color='red', edgecolor='black')
+            plt.title("Distribusi Nilai Kesamaan Antar Protein")
+            plt.xlabel("Nilai Kesamaan")
+            plt.ylabel("Frekuensi")
+            plt.show()
+          ```
+ 
+          <div style="text-align: center;">
+              <img src="https://github.com/user-attachments/assets/a97bb745-d5d8-44b9-9625-27930a5c4a7a" alt="Nilai Kesamaan Antar Senyawa" width="500">
+              <p><b>Gambar 1b - Nilai Kesamaan Antar Protein</b></p>
+          </div>
+
+          Sama seperti _output_ sebelumnya **sangat miring ke kanan (_positively skewed_)**, sehingga penangannya adalah Transformasi data yang akan dilakukan di **Data Preparation**
+
+          
+
+
+          
 
           
           
