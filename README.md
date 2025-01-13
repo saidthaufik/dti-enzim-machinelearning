@@ -139,7 +139,18 @@ Data ini dapat diakses secara terbuka pada link berikut:
         ```
 
         Berdasarkan _output_ diatas, tidak terdapat nilai duplikat terhadap semua kolom atau fitur
-        
+
+      - Visualisasi Data
+     
+        Teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan yakni persebaran data dari `Protein_ID` dan `Compound_ID`
+
+        <div style="text-align: center;">
+            <img src="https://github.com/user-attachments/assets/ef8b1ed8-d107-4cc2-8b94-5175c974c42c" alt="Persebaran Data Protein_ID dan Compound_ID" width="500">
+            <p><b>Gambar 1 - Persebaran Data `Protein_ID` dan `Compound_ID`</b></p>
+        </div>
+
+        Berdasarkan hasil histrogram diatas bahwa `Protein_ID` lebih memiliki data yang signifikan terhadap `Compound_ID`
+    
     - Dataset Compound Features (`e_simmat_dc.txt`)
       - Periksa Dimensi
         ```python
@@ -182,7 +193,7 @@ Data ini dapat diakses secara terbuka pada link berikut:
 
         Sparsity matriks adalah 4.03%, itu berarti 95.97% dari elemen matriks memiliki nilai, menunjukkan bahwa matriks ini tidak terlalu sparse (jarang). Sehingga, memungkinkan analisis langsung.
 
-        - Menampilkan nilai _min_, _max_, dan mean untuk setiap kolom
+      - Menampilkan nilai _min_, _max_, dan mean untuk setiap kolom
         ```python
         min_values = compound_data.min().min()
         max_values = compound_data.max().max()
@@ -206,6 +217,17 @@ Data ini dapat diakses secara terbuka pada link berikut:
         - nilai rata-rata dari dataset `compund_data` adalah 0,172
         
         Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
+        
+      - Visualisasi Data
+     
+        Teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan. Dalam hal ini melakukan pengecekan distribusi dari data kesamaan antar senyawa.
+
+        <div style="text-align: center;">
+            <img src="https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20" alt="Nilai Kesamaan Antar Senyawa" width="500">
+            <p><b>Gambar 2 - Nilai Kesamaan Antar Senyawa</b></p>
+        </div>
+        
+        Berdasarkan _output_ diatas, distribusi data `compound_data_ **sangat miring ke kanan (_positively skewed_)**. Distribusi seperti ini dapat menyebabkan masalah pada algoritma _machine learning_ yang mengasumsikan **distribusi normal (Gaussian)**, serta membuat model rentan terhadap **bias** akibat _outlier_. Sehingga penangannya adalah Transformasi Data yang akan dilakukan pada **Data Preparation**
 
     - Protein Features Data (`e_simmat_dg.txt`) 
       - Periksa Dimensi
@@ -274,42 +296,13 @@ Data ini dapat diakses secara terbuka pada link berikut:
         
         Sehingga kesimpulannya, dataset ini aman untuk dilakukan analisis lebih lanjut karena memiliki rentang 0-1
 
-    - **Data Visualization**
-      
-    Setelah dilakukan proses Exploratory Data Analysis (EDA), teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan. Visualisasi membantu menggambarkan hubungan antar fitur, dan distribusi nilai, dengan cara yang lebih intuitif.
+      - Visualisasi Data
+     
+        Teknik visualisasi digunakan untuk memberikan pemahaman yang lebih mendalam terhadap pola-pola data yang ditemukan. Dalam hal ini melakukan pengecekan distribusi dari data kesamaan antar protein.
 
-        - Distribusi Nilai Kesamaan Senyawa pada Compound Data
-          ```python
-            flattened_values = compound_data.values.flatten()
-            plt.figure(figsize=(10, 6))
-            plt.hist(flattened_values, bins=30, color='blue', edgecolor='black')
-            plt.title("Distribusi Nilai Kesamaan Antar Senyawa")
-            plt.xlabel("Nilai Kesamaan")
-            plt.ylabel("Frekuensi")
-            plt.show()
-          ```
-          
-          <div style="text-align: center;">
-              <img src="https://github.com/user-attachments/assets/36e09965-14f6-48ce-a9d5-f680d940be20" alt="Nilai Kesamaan Antar Senyawa" width="500">
-              <p><b>Gambar 1a - Nilai Kesamaan Antar Senyawa</b></p>
-          </div>
-
-          Berdasarkan _output_ diatas, distribusi data `compound_data_ **sangat miring ke kanan (_positively skewed_)**. Distribusi seperti ini dapat menyebabkan masalah pada algoritma _machine learning_ yang mengasumsikan **distribusi normal (Gaussian)**, serta membuat model rentan terhadap **bias** akibat _outlier_. Sehingga penangannya adalah Transformasi Data yang akan dilakukan pada **Data Preparation**
-
-          - Distribusi Nilai Kesamaan Protein pada Pada Data
-          ```python
-            flattened_values = protein_data.values.flatten()
-            plt.figure(figsize=(10, 6))
-            plt.hist(flattened_values, bins=30, color='red', edgecolor='black')
-            plt.title("Distribusi Nilai Kesamaan Antar Protein")
-            plt.xlabel("Nilai Kesamaan")
-            plt.ylabel("Frekuensi")
-            plt.show()
-          ```
- 
           <div style="text-align: center;">
               <img src="https://github.com/user-attachments/assets/a97bb745-d5d8-44b9-9625-27930a5c4a7a" alt="Nilai Kesamaan Antar Senyawa" width="500">
-              <p><b>Gambar 1b - Nilai Kesamaan Antar Protein</b></p>
+              <p><b>Gambar 3 - Nilai Kesamaan Antar Protein</b></p>
           </div>
 
           Sama seperti _output_ sebelumnya **sangat miring ke kanan (_positively skewed_)**, sehingga penangannya adalah Transformasi data yang akan dilakukan di **Data Preparation**
@@ -691,7 +684,7 @@ plt.show()
 
 <div style="text-align: center;">
     <img src="https://github.com/user-attachments/assets/0fe6ff04-4df5-4490-89ae-545e7b25d12b" alt="Distribusi Kelas Label" width="500">
-    <p><b>Gambar 2 - Distribusi Kelas Label</b></p>
+    <p><b>Gambar 4 - Distribusi Kelas Label</b></p>
 </div>
 
 Berikut adalah sebaran distribusi label `0` (berinteraksi) dan `1` (tidak berinterasi):
@@ -855,16 +848,16 @@ Tujuannya adalah untuk **meningkatkan performa model** dengan menghilangkan skal
 
   <div style="text-align: center;">
       <img src="https://github.com/user-attachments/assets/7bbb3ff8-1a11-4a41-b682-aa3dc9fbc4af" alt="Distribusi Kelas Label" width="500">
-      <p><b>Gambar 3 - Data Distribution (After Transform Data)</b></p>
+      <p><b>Gambar 5 - Data Distribution (After Transform Data)</b></p>
   </div
       
   Gambar di atas menampilkan distribusi fitur protein dan _compound_ pada data **Training**, **Validation**, dan **Testing** setelah diterapkan **PowerTransformer (Yeo-Johnson)**. Distribusi yang sebelumnya **sangat miring (_skewed_)** kini telah berubah menjadi lebih **simetris** dan mendekati **distribusi normal (Gaussian)**. 
 
 # Model Development 
+Pada bagian ini, proses akan diterapkan untuk membangun model _machine learning_ yang dapat memprediksi interaksi antara protein dan senyawa. Beberapa algoritma yang digunakan mencakup metode klasik dan _deep learning_ sebagai **_baseline_** percobaan berikut adalah algoritma yang digunakan:
 
-Pada bagian ini, proses akan diterapkan untuk membangun model _machine learning_ yang dapat memprediksi interaksi antara protein dan senyawa. Beberapa algoritma yang digunakan mencakup metode klasik dan _deep learning_ 
+**1. Random Forest**
 
-- 1. Random Forest
 Random Forest adalah algoritma berbasis _ensemble_ yang **membangun banyak pohon keputusan** dan menggabungkan hasilnya untuk meningkatkan akurasi dan mengurangi _overfitting_.
 
 **Kelebihan:**
@@ -876,13 +869,8 @@ Random Forest adalah algoritma berbasis _ensemble_ yang **membangun banyak pohon
 - Cenderung lambat untuk dataset besar dengan banyak pohon.
 - Kurang efektif dalam menangani data yang sangat _sparse_.
 
-Berikut adalah implementasi kodenya:
+**2. K-Nearest Neighbors (KNN)**
 
-```python
-random_forest = RandomForestClassifier(n_estimators=10, random_state=42)
-```
-
-- 2. K-Nearest Neighbors (KNN)
 KNN adalah algoritma yang bekerja berdasarkan **kedekatan jarak antar data** untuk menentukan kelas atau nilai prediksi.
 
 **Kelebihan:**
@@ -893,13 +881,8 @@ KNN adalah algoritma yang bekerja berdasarkan **kedekatan jarak antar data** unt
 - Sensitif terhadap outlier dan skala data (memerlukan normalisasi).
 - Proses prediksi lambat untuk dataset besar karena memerlukan perhitungan jarak untuk setiap data.
 
-Berikut adalah implementasi kodenya:
+**3. Stacked Autoencoder Deep Neural Network (SAE DNN)**
 
-```python
-knn = KNeighborsClassifier(n_neighbors=5)
-```
-
-### 3. Stacked Autoencoder Deep Neural Network (SAE DNN)
 SAE DNN adalah pendekatan **_deep learning_ yang menggunakan _autoencoder_ untuk mereduksi dimensi dan mengekstrak fitur** sebelum diterapkan ke jaringan saraf dalam.
 
 **Kelebihan:**
@@ -911,30 +894,8 @@ SAE DNN adalah pendekatan **_deep learning_ yang menggunakan _autoencoder_ untuk
 - Membutuhkan waktu pelatihan yang lebih lama dan sumber daya komputasi yang lebih besar.
 - Memerlukan tuning parameter yang rumit untuk performa optimal.
 
-Berikut adalah implementasi kodenya:
+**4. AdaBoost**
 
-```python
-def build_sae_dnn(input_shape, dropout_rate1=0.5, dropout_rate2=0.5, 
-                  units1=1024, units2=512, units3=256, units4=128, 
-                  learning_rate=0.001):
-    # Input Layer
-    inputs = Input(shape=(input_shape,))
-
-    # SAE Model
-    x = Dropout(dropout_rate1)(inputs)
-    x = Dense(units1, activation='relu')(x)
-    x = Dense(units2, activation='relu')(x)
-    encoded = Dense(units3, activation='relu')(x)
-
-    # DNN Model
-    x = BatchNormalization()(encoded)
-    x = Dropout(dropout_rate2)(x)
-    x = Dense(units4, activation='relu')(x)
-    x = Dropout(dropout_rate2)(x)
-    outputs = Dense(1, activation='sigmoid')(x)  # Output Layer
-```
-
-- 4. AdaBoost
 AdaBoost adalah algoritma _boosting_ yang menggabungkan beberapa model lemah (_weak learners_) untuk membentuk model yang kuat dengan meningkatkan bobot kesalahan.
 
 **Kelebihan:**
@@ -945,89 +906,16 @@ AdaBoost adalah algoritma _boosting_ yang menggabungkan beberapa model lemah (_w
 - Rentan terhadap _noise_ dan _outlier_.
 - Memerlukan waktu pelatihan yang lebih lama karena proses iteratif.
 
-Berikut adalah implementasi kodenya:
+Kemudian, _baseline model_ dari keempat algoritma tersebut yang memiliki akurasi tertinggi digunakan untuk ke tahap selanjutnya. Selanjutnya, algoritma tersebut digunakan kembali untuk pembangunan model, tetapi dengan memanfaatkan _hyperparameter_ yang ada sehingga mendapatkan hasil terbaik. Untuk menemukan _hyperparamter_ yang memberikan hasil terbaik, `GridSearch` digunakan ke model yang terpilih.
 
-```python
-ada_model = AdaBoostClassifier(random_state=42)
-```
-
-# Evaluasi
-
-Proses Evaluasi ini akan mengevaluasi performa masing-masing algoritma dengan metrik evaluasi akurasi pada data _testing_ untuk membandingkan efektivitas prediksi pada model _baseline_. Model _baseline_ terbaik akan digunakan sebagai dasar untuk pengembangan lebih lanjut. Berikut adalah beberapa model yang digunakan:
-
-## Evaluasi Algoritma _Baseline_
-
-- Evaluasi Baseline Algoritma Random Forest
-
-  ``` python
-  random_forest.fit(X_train, y_train)
-  rf_predictions = random_forest.predict(X_test)
-  rf_acc = accuracy_score(y_test, rf_predictions)
-  print(f'Akurasi Algoritma Random Forest: {rf_acc}')
-  ```
-
-  Outputnya adalah:
-  ```
-  Akurasi Algoritma Random Forest: 0.9222011385199241
-  ```
-
-  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `92,20%`
-
-- Evaluasi Baseline Algoritma KNN
-  ``` python
-  knn.fit(X_train, y_train)
-  knn_predictions = knn.predict(X_test)
-  knn_acc = accuracy_score(y_test, knn_predictions)
-  print(f'Akurasi Algoritma KNN: {knn_acc}')
-  ```
-
-  Outputnya adalah:
-  ```
-  Akurasi Algoritma KNN: 0.849146110056926
-  ```
-
-  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `84,91%`
-
-- Evaluasi Baseline Algoritma SAE-DNN
-
-  ``` python
-  model = build_sae_dnn(input_shape=X_train.shape[1])
-  model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
-  preds = (model.predict(X_test) > 0.5).astype(int)
-  saednn_acc = accuracy_score(y_test, preds)
-  print(f'Akurasi Algoritma SAE-DNN: {saednn_acc}')
-  ```
-
-  Outputnya adalah:
-  ```
-  Akurasi Algoritma SAE-DNN: 0.9013282732447818
-  ```
-  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `90,13%`
-
-- Evaluasi Baseline Algoritma AdaBoost
-
-  ``` python
-  ada_model.fit(X_train, y_train)
-  preds = ada_model.predict(X_test)
-  adab_acc = accuracy_score(y_test, preds)
-  print(f'Akurasi Algoritma AdaBoost: {adab_acc}')
-  ```
-
-  Outputnya adalah:
-  ```
-  Akurasi Algoritma AdaBoost: 0.8197343453510436
-  ```
-
-  Berdasarkan percobaan data testing diatas menghasilkan akurasi sebesar `81,97%`
-
-## Perbandingan Hasil Algoritma Baseline
+Berikut ini adalah hasil dari _baseline model_ untuk ketiga model:
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/9ec07b8e-701d-4688-b6ce-090fe0ec5d2b" alt="Comparison Baseline Algorithm" width="500">
-  <p><b>Gambar 4 - Comparison Baseline Algorithm</b></p>
+  <p><b>Gambar 6 - Comparison Baseline Algorithm</b></p>
 </div>
 
-Berdasarkan hasil perbandingan percobaan data _testing_ diatas dihasilkan:
+Berdasarkan hasil perbandingan percobaan _baseline_ diatas dihasilkan:
 - Algoritma Random Forest = `92,22%`
 - Algoritma KNN = `84,91%`
 - Algoritma SAE-DNN = `90,13%`
@@ -1035,9 +923,7 @@ Berdasarkan hasil perbandingan percobaan data _testing_ diatas dihasilkan:
 
 Sehingga terpilih algoritma **Random Forest** (_Ensemble Based_) untuk dapat dilakukan _Tunning Hyperparameter_ 
 
-## Hyperparameter Tunning
-
-Pada proses ini dilakukan pencarian parameter terbaik untuk model menggunakan metode **GridSearchCV**. _Hyperparameter tuning_ bertujuan untuk meningkatkan kinerja model dengan mencoba berbagai kombinasi parameter yang telah ditentukan sebelumnya. 
+Pada proses Tunning Hyperparameter dilakukan pencarian parameter terbaik untuk model menggunakan metode **GridSearchCV**. _Hyperparameter tuning_ bertujuan untuk meningkatkan kinerja model dengan mencoba berbagai kombinasi parameter yang telah ditentukan sebelumnya. 
 
 **GridSearchCV** digunakan karena memungkinkan eksplorasi sistematis dari kombinasi parameter yang telah ditentukan sebelumnya dengan proses yang terstruktur dan otomatis. 
 
@@ -1047,8 +933,7 @@ Beberapa parameter yang dituning dalam algoritma **Random Forest** meliputi:
 - **`min_samples_split`:** Jumlah minimum sampel yang diperlukan untuk membagi node.
 - **`min_samples_leaf`:** Jumlah minimum sampel yang harus dimiliki oleh daun pohon.
 
-Berikut adalah implementasi kodenya dengan beberapa kombinasi _setting_ nilai _hyperparameter_ pada Algoritma Random Forest:
-
+Berikut implementasi _hyperparameter tuning_ nya:
 ```python
 # Parameter grid
 param_grid = {
@@ -1069,9 +954,7 @@ preds = best_rf.predict(X_val)
 print(f'Best Parameters: {grid_search.best_params_}')
 print(f'Random Forest Akurasi (Tuned) pada Validation: {accuracy_score(y_val, preds):.4f}')
 ```
-
-Dengan _output_ sebagai berikut:
-
+Dengan _output_
 ```
 Fitting 5 folds for each of 108 candidates, totalling 540 fits
 Best Parameters: {'max_depth': 30, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200}
@@ -1084,60 +967,38 @@ Setelah dilakukan _hyperparameter tuning_ didapatkan kombinasi yang terbaik yakn
 - `min_samples_split`: 2 
 - `n_estimators`: 200
 
-Dengan akurasi terhadap data _validation_ adalah sebesar **94,26%**
+Berikut ini adalah penjelasan dari keempat parameter tersebut:
 
-## Evaluasi
-Setelah proses pelatihan dan tuning selesai, evaluasi model dilakukan dengan menggunakan **_Confusion Matrix_**. _Confusion Matrix_ memberikan gambaran performa model dengan menunjukkan jumlah prediksi yang benar dan salah untuk setiap kelas. 
+- `max_depth`: 30 Ini menentukan kedalaman maksimum pohon. Dalam kasus ini, pohon tidak akan tumbuh lebih dari 30 tingkat. Kedalaman yang lebih besar bisa meningkatkan keakuratan model tetapi juga meningkatkan risiko _overfitting_.
+
+- `min_samples_leaf`: 1 Ini adalah jumlah sampel minimum yang diperlukan untuk menjadi daun pohon. Jadi, setiap daun harus memiliki setidaknya 2 sampel. Parameter ini membantu mengontrol _overfitting_ dengan memastikan bahwa daun tidak terlalu spesifik hanya pada sampel pelatihan.
+
+- `min_samples_split`: 2, Ini menunjukkan jumlah sampel minimum yang diperlukan untuk membagi simpul internal. Sebuah simpul akan dibagi jika memiliki 2 atau lebih sampel. Ini juga membantu mencegah _overfitting_ dengan memastikan bahwa pembagian tidak terlalu spesifik.
+
+- `n_estimators`: 200 Ini menunjukkan jumlah pohon dalam forest. Di sini, model akan menggunakan 200 pohon. Biasanya, semakin banyak pohon, semakin stabil prediksi model, tetapi juga akan membutuhkan lebih banyak waktu komputasi dan memori.
+
+Hasil dari `GridSearch` tersebut digunakan sebagai _hyperparameter_ untuk mengevaluasi model **Random Forest** tersebut.
+
+  
+# Evaluasi
+
+Proses Evaluasi ini akan **Mengevaluasi Performa hasil dari _tuning hyperparameter_** dengan `Accuracy`, `Precision`, `Recall`, dan `F1 Score` dari **Confusion Matrix**
+
+**Confusion Matrix** adalah metrik yang memberikan gambaran performa model dengan menunjukkan jumlah prediksi yang benar dan salah untuk setiap kelas. Berikut adalah gambaran yang lebih jelas terkait dengan Confusion Matrix:
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/c72b66f7-c695-42af-b6bf-7e2b87b71afc" alt="Confusion Matrix" width="500"/>  
   <br> 
-  <b>Gambar 4 - Confusion Matrix</b>  
+  <b>Gambar 7 - Confusion Matrix</b>  
   <br> 
   <i>(Sumber: Rahul Sankar, 2023 <a href="https://ogre51.medium.com/how-is-confusion-matrix-useful-in-classification-problems-fd746a673aac">[11]</a>)</i>
 </div>
-
 
 **Metrik yang dievaluasi** dari _Confusion Matrix_ meliputi:
 - **True Positive (TP):** Jumlah prediksi positif yang benar.
 - **True Negative (TN):** Jumlah prediksi negatif yang benar.
 - **False Positive (FP):** Jumlah prediksi positif yang salah (_false alarm_).
 - **False Negative (FN):** Jumlah prediksi negatif yang salah (_missed detection_).
-
-Berikut adalah implementasi kodenya:
-
-```python
-preds = best_rf.predict(X_test)
-cm = confusion_matrix(y_test, preds)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negatif', 'Positif'])
-disp.plot(cmap='Blues')
-plt.title('Confusion Matrix')
-plt.show()
-```
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result" width="500"/>
-  <br>
-  <b>Gambar 5 - Confusion Matrix Result</b>
-</div>
-
-Berdasarkan grafik diatas berikut adalah Hasil _Confusion Matrix_ dari Permodelan Data _Testing_ yang totalnya berjumlah **1.054 Data**:
-
-1. **True Negative (TN) - 482**  
-   Model berhasil memprediksi **482 sampel negatif** dengan benar.
-
-2. **False Positive (FP) - 33**  
-   Model salah memprediksi **33 sampel negatif** sebagai **positif**.  
-   Ini menunjukkan adanya beberapa kesalahan identifikasi negatif.
-
-3. **False Negative (FN) - 37**  
-   Model salah memprediksi **37 sampel positif** sebagai **negatif**.  
-   Ini berarti ada beberapa interaksi yang sebenarnya **positif** tetapi tidak terdeteksi.
-
-4. **True Positive (TP) - 502**  
-   Model berhasil memprediksi **502 sampel positif** dengan benar.
-
-Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** untuk mengukur performa model terhadap _Data Testing_ yang meliputi:  
 
 Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** untuk mengukur performa model terhadap _Data Testing_ yang meliputi:  
 
@@ -1160,8 +1021,41 @@ Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** unt
    Rata-rata harmonik antara presisi dan _recall_, memberikan keseimbangan antara kedua metrik ini.  
 
    $$F1\text{-}Score = \frac{2 \cdot Precision \cdot Recall}{Precision + Recall}$$
+   
+Berikut adalah hasil dari _confusion matrix_ yang ditunjukan pada gambar dibawah ini:
 
-Berikut adalah implementasi kodenya:
+```python
+preds = best_rf.predict(X_test)
+cm = confusion_matrix(y_test, preds)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negatif', 'Positif'])
+disp.plot(cmap='Blues')
+plt.title('Confusion Matrix')
+plt.show()
+```
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/84cdfcc0-b8b9-4662-b390-f5e3e42cd0c5" alt="Confusion Matrix Result" width="500"/>
+  <br>
+  <b>Gambar 8 - Confusion Matrix Result</b>
+</div>
+
+Berdasarkan grafik diatas berikut adalah Hasil _Confusion Matrix_ dari Permodelan Data _Testing_ yang totalnya berjumlah **1.054 Data**:
+
+1. **True Negative (TN) - 482**  
+   Model berhasil memprediksi **482 sampel negatif** dengan benar.
+
+2. **False Positive (FP) - 33**  
+   Model salah memprediksi **33 sampel negatif** sebagai **positif**.  
+   Ini menunjukkan adanya beberapa kesalahan identifikasi negatif.
+
+3. **False Negative (FN) - 37**  
+   Model salah memprediksi **37 sampel positif** sebagai **negatif**.  
+   Ini berarti ada beberapa interaksi yang sebenarnya **positif** tetapi tidak terdeteksi.
+
+4. **True Positive (TP) - 502**  
+   Model berhasil memprediksi **502 sampel positif** dengan benar.
+
+Dari hasil _Confusion Matrix_, dilakukan beberapa **Metode metrik evaluasi** untuk mengukur performa model terhadap _Data Testing_ berikut adalah hasilnya:
 
 ``` python
 best_rf = grid_search.best_estimator_
